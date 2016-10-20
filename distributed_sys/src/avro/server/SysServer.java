@@ -9,18 +9,27 @@ import org.apache.avro.ipc.Server;
 import org.apache.avro.ipc.specific.SpecificResponder;
 
 import avro.proto.Hello;
+import avro.client.*;
 
+import java.util.Vector;
 
-public class HelloServer implements Hello {
+public class SysServer implements Hello {
 
-	private int id = 0;
+	private int id;
+	private Vector<Client> clients;
+	
+	public SysServer(){
+		
+		this.id = 0;
+	}
+	
+
 	
 	@Override
-	public CharSequence sayHello(CharSequence username) throws AvroRemoteException
+	public int connect() throws AvroRemoteException
 	{
-		System.out.println(" Client connected: " + username + " (number: " + id + " )");
-		
-		return "Hello " + username + " , you are user number " + id ++;
+		System.out.println(" Client connected: Bob (number: " + id + " )");
+		return this.id++;
 	}
 
 
@@ -30,7 +39,7 @@ public class HelloServer implements Hello {
 		
 		Server server = null;
 		try {
-			server = new SaslSocketServer(new SpecificResponder(Hello.class, new HelloServer()), new InetSocketAddress(6789));
+			server = new SaslSocketServer(new SpecificResponder(Hello.class, new SysServer()), new InetSocketAddress(6789));
 		} catch (IOException e) {
 			System.err.println(" error Failed to start server");
 			e.printStackTrace(System.err);

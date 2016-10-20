@@ -1,11 +1,11 @@
 { 
   "namespace": "avro.proto",
-  "protocol": "connect",
+  "protocol": "changelight",
   
   "messages": {
-    "connect": {
+    "changelight": {
       "request": [],
-      "response": "int"
+      "response": "null"
     }
   }
 }
