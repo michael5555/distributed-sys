@@ -1,0 +1,17 @@
+package avro.client;
+
+public class User extends Client {
+	
+	String username;
+	
+	User(int port, String username){
+		
+		super(port)
+	}
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

@@ -1,0 +1,17 @@
+package avro.client;
+
+public class Light extends Client {
+	
+	private Boolean state;
+
+	public Light(int port) {
+		super(port);
+		state = false;
+	}
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

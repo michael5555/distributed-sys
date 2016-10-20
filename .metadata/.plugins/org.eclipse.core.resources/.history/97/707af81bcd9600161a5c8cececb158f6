@@ -1,0 +1,42 @@
+package avro.client;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+
+import org.apache.avro.ipc.SaslSocketTransceiver;
+import org.apache.avro.ipc.Transceiver;
+import org.apache.avro.ipc.specific.SpecificRequestor;
+
+import avro.proto.Hello;
+
+
+public class HelloClient {
+	
+	private int id;
+	Transceiver client;
+	
+	public HelloClient(int port){
+		
+		this.client = new SaslSocketTransceiver(new InetSocketAddress(port));
+		Hello proxy =  (Hello) SpecificRequestor.getClient(Hello.class, client);
+		id = proxy.sayHello("Bob");
+
+		
+		
+	}
+	
+
+
+	public static void main(String[] args) {
+		try {
+			System.out.println(id);
+			client.close();
+		} catch(IOException e) {
+			System.err.println("Error connecting to server ...");
+			e.printStackTrace(System.err);
+			System.exit(1);
+		}
+
+	}
+
+}

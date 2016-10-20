@@ -1,0 +1,11 @@
+{ 
+  "namespace": "avro.proto",
+  "protocol": "Hello",
+  
+  "messages": {
+    "connect": {
+      "request": [],
+      "response": "int"
+    }
+  }
+}
