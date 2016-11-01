@@ -11,7 +11,6 @@ public class User extends Client {
 	}
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		
 		User Bob = new User(6789,"Bobby");
 
