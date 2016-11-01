@@ -16,7 +16,7 @@ import java.util.Vector;
 public class SysServer implements Hello {
 
 	private int id;
-	private Vector<Client> clients;
+	private Vector<Integer> clients;
 	
 	public SysServer(){
 		
