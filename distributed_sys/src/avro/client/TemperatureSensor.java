@@ -19,7 +19,14 @@ public class TemperatureSensor extends Client {
 	
 	void nextMeasurement() {
 		
-		measurement = measurement + gen.nextGaussian();
+		double newmeasure = gen.nextGaussian();
+		if (newmeasure > 1){
+			newmeasure = 1;
+		}
+		else if (newmeasure < -1){
+			newmeasure = -1;
+		}
+		measurement = measurement + newmeasure;
 		
 	}
 	
