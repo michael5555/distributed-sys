@@ -6,7 +6,7 @@ public class Fridge extends Client {
 	private Vector<String> items;
 
 	public Fridge(int port) {
-		super(port);
+		super(port,"Fridge");
 	}
 	
 	Vector<String> getItems(){

@@ -4,7 +4,7 @@
   
   "messages": {
     "connect": {
-      "request": [],
+      "request": [{"name" :  "type2", "type" : "string"}],
       "response": "int"
     }
   }

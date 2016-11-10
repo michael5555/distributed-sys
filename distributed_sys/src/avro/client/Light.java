@@ -5,7 +5,7 @@ public class Light extends Client {
 	private Boolean state;
 
 	public Light(int port) {
-		super(port);
+		super(port,"Light");
 		state = false;
 	}
 	

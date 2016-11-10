@@ -8,7 +8,7 @@ public class TemperatureSensor extends Client {
 	 private Random gen = new Random();
 
 	public TemperatureSensor(int port) {
-		super(port);
+		super(port, "TS");
 		measurement = gen.nextGaussian() + 20;
 	}
 	
@@ -19,7 +19,15 @@ public class TemperatureSensor extends Client {
 	
 	void nextMeasurement() {
 		
-		measurement = measurement + gen.nextGaussian();
+		double newmeasure = gen.nextGaussian();
+		if(newmeasure > 1){
+			newmeasure = 1;
+		}
+		else if (newmeasure < -1){
+			newmeasure = -1;
+		}
+		
+		measurement = measurement + newmeasure;
 		
 	}
 	

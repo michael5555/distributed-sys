@@ -8,12 +8,12 @@ package avro.proto;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public interface connect {
-  public static final org.apache.avro.Protocol PROTOCOL = org.apache.avro.Protocol.parse("{\"protocol\":\"connect\",\"namespace\":\"avro.proto\",\"types\":[],\"messages\":{\"connect\":{\"request\":[],\"response\":\"int\"}}}");
-  int connect() throws org.apache.avro.AvroRemoteException;
+  public static final org.apache.avro.Protocol PROTOCOL = org.apache.avro.Protocol.parse("{\"protocol\":\"connect\",\"namespace\":\"avro.proto\",\"types\":[],\"messages\":{\"connect\":{\"request\":[{\"name\":\"type2\",\"type\":\"string\"}],\"response\":\"int\"}}}");
+  int connect(java.lang.CharSequence type2) throws org.apache.avro.AvroRemoteException;
 
   @SuppressWarnings("all")
   public interface Callback extends connect {
     public static final org.apache.avro.Protocol PROTOCOL = avro.proto.connect.PROTOCOL;
-    void connect(org.apache.avro.ipc.Callback<java.lang.Integer> callback) throws java.io.IOException;
+    void connect(java.lang.CharSequence type2, org.apache.avro.ipc.Callback<java.lang.Integer> callback) throws java.io.IOException;
   }
 }

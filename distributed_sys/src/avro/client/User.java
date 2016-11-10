@@ -6,7 +6,7 @@ public class User extends Client {
 	
 	User(int port, String username){
 		
-		super(port);
+		super(port,"User");
 		this.username = username;
 	}
 
