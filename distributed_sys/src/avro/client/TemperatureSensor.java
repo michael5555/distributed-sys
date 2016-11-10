@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 package avro.client;
 
 
