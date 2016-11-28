@@ -9,6 +9,8 @@ import org.apache.avro.ipc.Server;
 import org.apache.avro.ipc.specific.SpecificResponder;
 
 import avro.proto.connect;
+import avro.proto.getlights;
+
 import avro.client.*;
 
 import java.util.Vector;
@@ -36,6 +38,28 @@ class ClientInfo {
 	}
 }
 
+class LightInfo {
+	
+	private int id;
+	private Boolean status;
+	
+	public LightInfo(int i, Boolean b){
+		
+		id = i;
+		status = b;
+	}
+	
+	public int getID() {
+		
+		return id;
+	}
+	
+	public Boolean getType() {
+		
+		return status;
+	}
+}
+
 class UserInfo {
 	
 	private int id;
@@ -57,11 +81,13 @@ class UserInfo {
 		return home;
 	}
 }
-public class SysServer implements connect {
+public class SysServer implements connect, getlights {
 
 	private int id;
 	private Vector<ClientInfo> clients;
 	private Vector<UserInfo> users;
+	private Vector<LightInfo> lights;
+
 
 	
 	public SysServer(){
@@ -69,6 +95,7 @@ public class SysServer implements connect {
 		this.id = 0;
 		clients = new Vector<ClientInfo>();
 		users = new Vector<UserInfo>();
+		lights = new Vector<LightInfo>();
 	}
 	
 
@@ -88,6 +115,13 @@ public class SysServer implements connect {
 		System.out.println(" Client connected: " + type2 + " (number: " + id + " )");
 		return this.id++;
 	}
+	
+	@Override
+	public int getlights (int id, boolean status) throws AvroRemoteException 
+	{
+		lights.add(new LightInfo(id, status));
+		return 0;
+	}
 
 
 
@@ -106,6 +140,7 @@ public class SysServer implements connect {
 		try {
 			server.join();
 		}	catch ( InterruptedException e) { }
+		
 			
 	}
 	

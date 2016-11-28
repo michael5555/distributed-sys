@@ -23,7 +23,7 @@ public class Client {
 			connect proxy =  (connect) SpecificRequestor.getClient(connect.class, client);
 			this.id = proxy.connect(type);
 			System.out.println(id);
-			client.close();
+			//client.close();
 		} catch(IOException e){
 			
 			System.err.println("Error connecting to server ...");
@@ -34,6 +34,11 @@ public class Client {
 
 		
 		
+	}
+	
+	public int getID(){
+		
+		return this.id;
 	}
 	
 

@@ -1,6 +1,0 @@
-1476949169376	Rename package 'avro.hello.client'
-1476949196550	Rename package 'avro.hello.proto'
-1476949223911	Rename package 'avro.hello.server'
-1476971316651	Delete element
-1476972921064	Rename type 'HelloClient'
-1476972967481	Rename type 'HelloServer'

@@ -1,0 +1,12 @@
+{ 
+  "namespace": "avro.proto",
+  "protocol": "getlights",
+  
+
+  "messages": {
+    "getlights": {
+      "request": [{"name" :  "id", "type" : "int"}, {"name" : "status" , "type" : "boolean"}],
+      "response": "int"
+    }
+  }
+}
