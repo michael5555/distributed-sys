@@ -18,6 +18,7 @@ public class TemperatureSensor  {
 
 
 	public TemperatureSensor(int id) {
+		this.id = id;
 		measurement = gen.nextGaussian() + 20;
 	}
 	

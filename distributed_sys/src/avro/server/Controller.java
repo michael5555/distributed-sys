@@ -56,9 +56,14 @@ class LightInfo {
 		return id;
 	}
 	
-	public Boolean getType() {
+	public Boolean getStatus() {
 		
 		return status;
+	}
+	
+	public void setStatus(Boolean s) {
+		
+		this.status = s;
 	}
 }
 
@@ -78,7 +83,7 @@ class UserInfo {
 		return id;
 	}
 	
-	public Boolean getType() {
+	public Boolean getStatus() {
 		
 		return home;
 	}
@@ -121,8 +126,22 @@ public class Controller implements sysserver {
 	@Override
 	public int getlights (int id, boolean status) throws AvroRemoteException 
 	{
+		for(LightInfo temp : lights){
+			
+			if(temp.getID() == id){
+				
+				if(temp.getStatus() != status){
+					
+					temp.setStatus(status);
+					return 0;
+					
+				}
+			}
+		}
 		lights.add(new LightInfo(id, status));
 		System.out.println(" Light connected: " + id + " (status: " + status + " )");
+		System.out.println(lights.size());
+
 
 		return 0;
 	}

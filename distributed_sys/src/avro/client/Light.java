@@ -26,9 +26,12 @@ public class Light  {
 		return this.id;
 	}
 	
-	public void changeState(){
+	public void changeState(sysserver proxy){
 		
 		state = !state;
+		try{
+			proxy.getlights(this.id, this.state);
+		}catch(IOException e){}
 		System.out.println(" you changed your state to: " + state);
 	}
 	
@@ -43,6 +46,7 @@ public class Light  {
 			int id = proxy.connect("Light");
 			Light lampje = new Light(id);
 			int blabla = proxy.getlights(lampje.getID(), lampje.getState());
+			lampje.changeState(proxy);
 
 			//client.close();
 		} catch(IOException e){

@@ -18,7 +18,6 @@ public class Fridge  {
 	public Fridge(int id) {
 		items = new Vector<String>();
 		this.id = id;
-		System.out.println(this.id);
 
 		
 	}

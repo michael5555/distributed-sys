@@ -29,7 +29,6 @@ public class User  {
 	User(int id, String username){
 		this.id = id;
 		this.username = username;
-		System.out.println(this.id);
 	}
 	public int getID(){
 		
