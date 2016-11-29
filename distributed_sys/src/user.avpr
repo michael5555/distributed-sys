@@ -1,0 +1,26 @@
+{ 
+  "namespace": "avro.proto",
+  "protocol": "user",
+  
+  "types" : [
+  	{ "name" : "Lightinfo", "type" : "record" , "fields" : [
+  
+  		{ "name" : "id",  "type" : "int" },
+  		{ "name" : "status", "type" : "boolean" }
+  		
+  		
+  		 ] },
+  		 { "name" : "lights", "type" : "array",  "items" : "Lightinfo" }
+  	
+ 
+  
+  ],
+  
+  "messages":
+  	{
+    "recievelights": {
+      "request": [{"name" : "light",  "type" : "Lightinfo" }],
+      "response": "null"
+      }
+   }
+ }

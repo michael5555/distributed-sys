@@ -7,7 +7,7 @@ import org.apache.avro.ipc.SaslSocketTransceiver;
 import org.apache.avro.ipc.Transceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
 
-import avro.proto.connect;
+import avro.proto.sysserver;
 
 
 public class Client {
@@ -20,7 +20,7 @@ public class Client {
 		
 		try {
 			this.client = new SaslSocketTransceiver(new InetSocketAddress(port));
-			connect proxy =  (connect) SpecificRequestor.getClient(connect.class, client);
+			sysserver proxy =  (sysserver) SpecificRequestor.getClient(sysserver.class, client);
 			this.id = proxy.connect(type);
 			System.out.println(id);
 			//client.close();

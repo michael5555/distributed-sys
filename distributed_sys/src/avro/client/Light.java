@@ -1,20 +1,29 @@
 package avro.client;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 
+import org.apache.avro.ipc.SaslSocketTransceiver;
+import org.apache.avro.ipc.Transceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
 
-import avro.proto.connect;
-import avro.proto.getlights;
+import avro.proto.sysserver;
 
 
-public class Light extends Client {
+public class Light  {
 	
 	private Boolean state;
+	private int id;
 
-	public Light(int port) {
-		super(port,"Light");
+
+	public Light(int id) {
 		state = false;
+		this.id = id;
+	}
+	
+	public int getID(){
+		
+		return this.id;
 	}
 	
 	public void changeState(){
@@ -28,17 +37,19 @@ public class Light extends Client {
 	}
 
 	public static void main(String[] args) {
-		Light lampje = new Light(6789);
-		lampje.changeState();
-		lampje.changeState();
-		try{
-			getlights proxy =  (getlights) SpecificRequestor.getClient(getlights.class, lampje.client);
-			int blabla = proxy.getlights(lampje.getID(),lampje.getState());
+		try {
+			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(6789));
+			sysserver proxy =  (sysserver) SpecificRequestor.getClient(sysserver.class, client);
+			int id = proxy.connect("Light");
+			Light lampje = new Light(id);
+			int blabla = proxy.getlights(lampje.getID(), lampje.getState());
+
+			//client.close();
 		} catch(IOException e){
-		
-		System.err.println("Error connecting to server ...");
-		e.printStackTrace(System.err);
-		System.exit(1);
+			
+			System.err.println("Error connecting to server ...");
+			e.printStackTrace(System.err);
+			System.exit(1);
 
 		}
 

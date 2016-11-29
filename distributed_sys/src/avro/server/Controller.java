@@ -5,11 +5,13 @@ import java.net.InetSocketAddress;
 
 import org.apache.avro.AvroRemoteException;
 import org.apache.avro.ipc.SaslSocketServer;
+import org.apache.avro.ipc.SaslSocketTransceiver;
 import org.apache.avro.ipc.Server;
+import org.apache.avro.ipc.Transceiver;
+import org.apache.avro.ipc.specific.SpecificRequestor;
 import org.apache.avro.ipc.specific.SpecificResponder;
 
-import avro.proto.connect;
-import avro.proto.getlights;
+import avro.proto.sysserver;
 
 import avro.client.*;
 
@@ -81,16 +83,16 @@ class UserInfo {
 		return home;
 	}
 }
-public class SysServer implements connect, getlights {
+public class Controller implements sysserver {
 
 	private int id;
 	private Vector<ClientInfo> clients;
 	private Vector<UserInfo> users;
-	private Vector<LightInfo> lights;
+	public Vector<LightInfo> lights;
 
 
 	
-	public SysServer(){
+	public Controller(){
 		
 		this.id = 0;
 		clients = new Vector<ClientInfo>();
@@ -120,6 +122,8 @@ public class SysServer implements connect, getlights {
 	public int getlights (int id, boolean status) throws AvroRemoteException 
 	{
 		lights.add(new LightInfo(id, status));
+		System.out.println(" Light connected: " + id + " (status: " + status + " )");
+
 		return 0;
 	}
 
@@ -129,17 +133,25 @@ public class SysServer implements connect, getlights {
 	public static void main( String[] args){
 		
 		Server server = null;
+		Controller controller = new Controller();
+
 		try {
-			server = new SaslSocketServer(new SpecificResponder(connect.class, new SysServer()), new InetSocketAddress(6789));
+			server = new SaslSocketServer(new SpecificResponder(sysserver.class, controller), new InetSocketAddress(6789));
 		} catch (IOException e) {
 			System.err.println(" error Failed to start server");
 			e.printStackTrace(System.err);
 			System.exit(1);
 		}
 		server.start();
+		
+
+		
+		
 		try {
 			server.join();
 		}	catch ( InterruptedException e) { }
+		
+		
 		
 			
 	}

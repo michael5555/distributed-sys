@@ -1,0 +1,15 @@
+{ 
+  "namespace": "avro.proto",
+  "protocol": "sysserver",
+  
+  "messages":
+  	{
+    "connect": {
+      "request": [{"name" :  "type2", "type" : "string"}],
+      "response": "int"
+      }
+  	, "getlights": {
+      "request": [{"name" :  "id", "type" : "int"}, {"name" : "status" , "type" : "boolean"}],
+      "response": "int"
+    }	}
+ }
