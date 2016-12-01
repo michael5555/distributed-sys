@@ -45,7 +45,7 @@ public class Light  {
 			sysserver proxy =  (sysserver) SpecificRequestor.getClient(sysserver.class, client);
 			int id = proxy.connect("Light");
 			Light lampje = new Light(id);
-			int blabla = proxy.getlights(lampje.getID(), lampje.getState());
+			proxy.getlights(lampje.getID(), lampje.getState());
 			lampje.changeState(proxy);
 
 			//client.close();

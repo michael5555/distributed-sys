@@ -18,9 +18,12 @@ import avro.proto.sysserver;
 import avro.proto.user;
 
 import avro.server.Controller;
+import avro.proto.Lightinfo;
+import java.util.List;
 
 
-public class User  {
+
+public class User implements user  {
 	
 	private String username;
 	private int id;
@@ -34,6 +37,15 @@ public class User  {
 		
 		return this.id;
 	}
+	
+	public int recievelights (List<Lightinfo> lights) throws AvroRemoteException 
+	{
+		for(Lightinfo temp : lights){
+			
+			System.out.println("controller has a light with id " + temp.getId() + ", and this lights current state is: " + temp.getStatus());
+		}
+		return 0;
+	}
 
 	public static void main(String[] args) {
 		try {
@@ -43,6 +55,12 @@ public class User  {
 			sysserver proxy =  (sysserver) SpecificRequestor.getClient(sysserver.class, client);
 			int id = proxy.connect("User");
 			User Bob = new User(id,"Bobby");
+			List<Lightinfo> lights = proxy.recievelights(Bob.getID());
+			
+			for (Lightinfo temp : lights){
+				
+				System.out.println("we have a light with id: " + temp.getId() + " ,its state is currently: " + temp.getStatus());
+			}
 			userserver = new SaslSocketServer(new SpecificResponder(user.class, Bob), new InetSocketAddress(6790));
 
 			//client.close();

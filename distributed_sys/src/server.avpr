@@ -2,6 +2,34 @@
   "namespace": "avro.proto",
   "protocol": "sysserver",
   
+  
+    "types" : [
+  	{ "name" : "Lightinfo", "type" : "record" , "fields" : [
+  
+  		{ "name" : "id",  "type" : "int" },
+  		{ "name" : "status", "type" : "boolean" }
+  		
+  		
+  		 ] },
+  		 
+    { "name" : "Userinfo", "type" : "record" , "fields" : [
+  
+  		{ "name" : "id",  "type" : "int" },
+  		{ "name" : "athome", "type" : "boolean" }
+  		
+  		
+  		 ] },
+  		 
+  	{ "name" : "Clientinfo", "type" : "record" , "fields" : [
+  
+  		{ "name" : "id",  "type" : "int" },
+  		{ "name" : "type", "type" : "string" }
+  		
+  		
+  		 ] }
+  	
+  	
+  ],
   "messages":
   	{
     "connect": {
@@ -11,5 +39,9 @@
   	, "getlights": {
       "request": [{"name" :  "id", "type" : "int"}, {"name" : "status" , "type" : "boolean"}],
       "response": "int"
-    }	}
+    }
+    , "recievelights": {
+      "request": [{"name" : "id",  "type" :  "int" }],
+      "response": {"type" : "array", "items" :  "Lightinfo" } }
+      }	}
  }

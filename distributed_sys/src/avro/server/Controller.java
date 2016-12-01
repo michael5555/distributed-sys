@@ -15,94 +15,32 @@ import avro.proto.sysserver;
 
 import avro.client.*;
 
-import java.util.Vector;
+import avro.proto.Lightinfo;
+import avro.proto.Clientinfo;
+import avro.proto.Userinfo;
 
 
-class ClientInfo {
-	
-	private int id;
-	private CharSequence type;
-	
-	public ClientInfo(int i, CharSequence t){
-		
-		id = i;
-		type = t;
-	}
-	
-	public int getID() {
-		
-		return id;
-	}
-	
-	public CharSequence getType() {
-		
-		return type;
-	}
-}
 
-class LightInfo {
-	
-	private int id;
-	private Boolean status;
-	
-	public LightInfo(int i, Boolean b){
-		
-		id = i;
-		status = b;
-	}
-	
-	public int getID() {
-		
-		return id;
-	}
-	
-	public Boolean getStatus() {
-		
-		return status;
-	}
-	
-	public void setStatus(Boolean s) {
-		
-		this.status = s;
-	}
-}
 
-class UserInfo {
-	
-	private int id;
-	private Boolean home;
-	
-	public UserInfo(int i, Boolean h){
-		
-		id = i;
-		home = h;
-	}
-	
-	public int getID() {
-		
-		return id;
-	}
-	
-	public Boolean getStatus() {
-		
-		return home;
-	}
-}
+import java.util.List;
+import java.util.ArrayList;
+
+
 public class Controller implements sysserver {
 
 	private int id;
-	private Vector<ClientInfo> clients;
-	private Vector<UserInfo> users;
-	public Vector<LightInfo> lights;
+	private List<Clientinfo> clients;
+	private List<Userinfo> users;
+	public List<Lightinfo> lights;
 
 
 	
 	public Controller(){
 		
 		this.id = 0;
-		clients = new Vector<ClientInfo>();
-		users = new Vector<UserInfo>();
-		lights = new Vector<LightInfo>();
+		clients = new ArrayList<Clientinfo>();
+		users = new ArrayList<Userinfo>();
+		lights = new ArrayList<Lightinfo>();
 	}
 	
 
@@ -112,12 +50,12 @@ public class Controller implements sysserver {
 	{
 		
 		if(type2.toString().equals("User")){
-			users.add( new UserInfo(id,true) );
+			users.add( new Userinfo(id,true) );
 		}
 		
 		else {
 			
-			clients.add(new ClientInfo(id,type2));
+			clients.add(new Clientinfo(id,type2));
 		}
 		System.out.println(" Client connected: " + type2 + " (number: " + id + " )");
 		return this.id++;
@@ -126,9 +64,9 @@ public class Controller implements sysserver {
 	@Override
 	public int getlights (int id, boolean status) throws AvroRemoteException 
 	{
-		for(LightInfo temp : lights){
+		for(Lightinfo temp : lights){
 			
-			if(temp.getID() == id){
+			if(temp.getId() == id){
 				
 				if(temp.getStatus() != status){
 					
@@ -138,7 +76,7 @@ public class Controller implements sysserver {
 				}
 			}
 		}
-		lights.add(new LightInfo(id, status));
+		lights.add(new Lightinfo(id, status));
 		System.out.println(" Light connected: " + id + " (status: " + status + " )");
 		System.out.println(lights.size());
 
@@ -146,6 +84,19 @@ public class Controller implements sysserver {
 		return 0;
 	}
 
+	
+	@Override
+	public List<Lightinfo> recievelights (int id) throws AvroRemoteException 
+	{
+		for(Userinfo temp : users){
+			
+			if(temp.getId() == id){
+				
+				return lights;
+			}
+		}
+			return new ArrayList<Lightinfo>();
+	}
 
 
 

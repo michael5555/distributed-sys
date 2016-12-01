@@ -9,8 +9,7 @@
   		{ "name" : "status", "type" : "boolean" }
   		
   		
-  		 ] },
-  		 { "name" : "lights", "type" : "array",  "items" : "Lightinfo" }
+  		 ] }
   	
  
   
@@ -19,8 +18,8 @@
   "messages":
   	{
     "recievelights": {
-      "request": [{"name" : "light",  "type" : "Lightinfo" }],
-      "response": "null"
+      "request": [{"name" : "light",  "type" :  {"type" : "array", "items" :  "Lightinfo" } }],
+      "response": "int"
       }
    }
  }
