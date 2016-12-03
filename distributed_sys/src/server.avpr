@@ -4,44 +4,49 @@
   
   
     "types" : [
-  	{ "name" : "Lightinfo", "type" : "record" , "fields" : [
-  
-  		{ "name" : "id",  "type" : "int" },
-  		{ "name" : "status", "type" : "boolean" }
-  		
-  		
-  		 ] },
-  		 
-    { "name" : "Userinfo", "type" : "record" , "fields" : [
-  
-  		{ "name" : "id",  "type" : "int" },
-  		{ "name" : "athome", "type" : "boolean" }
-  		
-  		
-  		 ] },
-  		 
-  	{ "name" : "Clientinfo", "type" : "record" , "fields" : [
-  
-  		{ "name" : "id",  "type" : "int" },
-  		{ "name" : "type", "type" : "string" }
-  		
-  		
-  		 ] }
+	  	{ "name" : "Lightinfo", "type" : "record" , "fields" : [
+	  
+	  		{ "name" : "id",  "type" : "int" },
+	  		{ "name" : "status", "type" : "boolean" }
+	  		
+	  		
+	  		 ] },
+	  		 
+	    { "name" : "Userinfo", "type" : "record" , "fields" : [
+	  
+	  		{ "name" : "id",  "type" : "int" },
+	  		{ "name" : "athome", "type" : "boolean" }
+	  		
+	  		
+	  		 ] },
+	  		 
+	  	{ "name" : "Clientinfo", "type" : "record" , "fields" : [
+	  
+	  		{ "name" : "id",  "type" : "int" },
+	  		{ "name" : "type", "type" : "string" }
+	  		
+	  		
+	  		 ] }
   	
   	
-  ],
-  "messages":
-  	{
-    "connect": {
-      "request": [{"name" :  "type2", "type" : "string"}],
-      "response": "int"
-      }
-  	, "getlights": {
-      "request": [{"name" :  "id", "type" : "int"}, {"name" : "status" , "type" : "boolean"}],
-      "response": "int"
-    }
-    , "recievelights": {
-      "request": [{"name" : "id",  "type" :  "int" }],
-      "response": {"type" : "array", "items" :  "Lightinfo" } }
-      }	}
+  	],
+	  "messages":
+	  {
+		    "connect": {
+		      "request": [{"name" :  "type2", "type" : "string"}],
+		      "response": "int"
+		      }
+		  	, "getlights": {
+		      "request": [{"name" :  "id", "type" : "int"}, {"name" : "status" , "type" : "boolean"}],
+		      "response": "int"
+		      }
+		    , "sendlights": {
+		      "request": [{"name" : "id",  "type" :  "int" }],
+		      "response": {"type" : "array", "items" :  "Lightinfo" } 
+		      }
+		      , "changelightstatus" : {
+		      "request": [{"name" :  "id", "type" : "int"}],
+		      "response": "int"
+	      	  }	
+ 	 }
  }

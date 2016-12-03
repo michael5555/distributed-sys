@@ -15,7 +15,6 @@ import java.net.InetSocketAddress;
 import org.apache.avro.ipc.Transceiver;
 
 import avro.proto.sysserver;
-import avro.proto.user;
 
 import avro.server.Controller;
 import avro.proto.Lightinfo;
@@ -23,7 +22,7 @@ import java.util.List;
 
 
 
-public class User implements user  {
+public class User {
 	
 	private String username;
 	private int id;
@@ -38,30 +37,27 @@ public class User implements user  {
 		return this.id;
 	}
 	
-	public int recievelights (List<Lightinfo> lights) throws AvroRemoteException 
-	{
-		for(Lightinfo temp : lights){
-			
-			System.out.println("controller has a light with id " + temp.getId() + ", and this lights current state is: " + temp.getStatus());
-		}
-		return 0;
-	}
+
 
 	public static void main(String[] args) {
 		try {
-			Server userserver = null;
 
 			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(6789));
 			sysserver proxy =  (sysserver) SpecificRequestor.getClient(sysserver.class, client);
 			int id = proxy.connect("User");
 			User Bob = new User(id,"Bobby");
-			List<Lightinfo> lights = proxy.recievelights(Bob.getID());
+			List<Lightinfo> lights = proxy.sendlights(Bob.getID());
 			
 			for (Lightinfo temp : lights){
 				
 				System.out.println("we have a light with id: " + temp.getId() + " ,its state is currently: " + temp.getStatus());
 			}
-			userserver = new SaslSocketServer(new SpecificResponder(user.class, Bob), new InetSocketAddress(6790));
+			proxy.changelightstatus(1);
+			lights = proxy.sendlights(Bob.getID());
+			for (Lightinfo temp : lights){
+				
+				System.out.println("we have a light with id: " + temp.getId() + " ,its state is currently: " + temp.getStatus());
+			}
 
 			//client.close();
 		} catch(IOException e){

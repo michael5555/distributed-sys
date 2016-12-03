@@ -12,6 +12,8 @@ import org.apache.avro.ipc.specific.SpecificRequestor;
 import org.apache.avro.ipc.specific.SpecificResponder;
 
 import avro.proto.sysserver;
+import avro.proto.lightproto;
+
 
 import avro.client.*;
 
@@ -78,7 +80,6 @@ public class Controller implements sysserver {
 		}
 		lights.add(new Lightinfo(id, status));
 		System.out.println(" Light connected: " + id + " (status: " + status + " )");
-		System.out.println(lights.size());
 
 
 		return 0;
@@ -86,7 +87,7 @@ public class Controller implements sysserver {
 
 	
 	@Override
-	public List<Lightinfo> recievelights (int id) throws AvroRemoteException 
+	public List<Lightinfo> sendlights (int id) throws AvroRemoteException 
 	{
 		for(Userinfo temp : users){
 			
@@ -96,6 +97,32 @@ public class Controller implements sysserver {
 			}
 		}
 			return new ArrayList<Lightinfo>();
+	}
+	
+	@Override
+	public int changelightstatus(int id){
+		
+		for(Lightinfo temp : lights){
+			
+			if( id == temp.getId()){
+				try {
+
+				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(6790 + id));
+				lightproto proxy =  (lightproto) SpecificRequestor.getClient(lightproto.class, client);
+				proxy.changestatus(id);
+				temp.setStatus(!temp.getStatus());
+				} catch(IOException e){
+					
+					System.err.println("Error connecting to light ...");
+					e.printStackTrace(System.err);
+					System.exit(1);
+
+				}
+
+			}
+		}
+		
+		return 0;
 	}
 
 

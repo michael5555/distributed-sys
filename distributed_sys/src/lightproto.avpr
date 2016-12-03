@@ -1,0 +1,14 @@
+{ 
+  "namespace": "avro.proto",
+  "protocol": "lightproto",
+  
+  
+
+	  "messages":
+	  {
+			 "changestatus" : {
+		      "request": [{"name" :  "id", "type" : "int"}],
+		      "response": "int"
+	      	  }	
+ 	 }
+ }
