@@ -1,6 +1,6 @@
 { 
   "namespace": "avro.proto",
-  "protocol": "sysserver",
+  "protocol": "serverproto",
   
   
     "types" : [
@@ -36,15 +36,15 @@
 		      "request": [{"name" :  "type2", "type" : "string"}],
 		      "response": "int"
 		      }
-		  	, "getlights": {
+		  	, "getLights": {
 		      "request": [{"name" :  "id", "type" : "int"}, {"name" : "status" , "type" : "boolean"}],
 		      "response": "int"
 		      }
-		    , "sendlights": {
+		    , "sendLights": {
 		      "request": [{"name" : "id",  "type" :  "int" }],
 		      "response": {"type" : "array", "items" :  "Lightinfo" } 
 		      }
-		      , "changelightstatus" : {
+		      , "changeLightStatus" : {
 		      "request": [{"name" :  "id", "type" : "int"}],
 		      "response": "int"
 	      	  }	

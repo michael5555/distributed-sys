@@ -8,7 +8,7 @@ import org.apache.avro.ipc.SaslSocketTransceiver;
 import org.apache.avro.ipc.Transceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
 
-import avro.proto.sysserver;
+import avro.proto.serverproto;
 public class Fridge  {
 	
 	private Vector<String> items;
@@ -22,7 +22,7 @@ public class Fridge  {
 		
 	}
 	
-	public int getID(){
+	public int getId(){
 		
 		return this.id;
 	}
@@ -35,7 +35,7 @@ public class Fridge  {
 	public static void main(String[] args) {
 		try {
 			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(6789));
-			sysserver proxy =  (sysserver) SpecificRequestor.getClient(sysserver.class, client);
+			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 			int id = proxy.connect("Fridge");
 			Fridge kastje = new Fridge(id);
 

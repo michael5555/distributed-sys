@@ -6,7 +6,7 @@
 
 	  "messages":
 	  {
-			 "changestatus" : {
+			 "changeStatus" : {
 		      "request": [{"name" :  "id", "type" : "int"}],
 		      "response": "int"
 	      	  }	

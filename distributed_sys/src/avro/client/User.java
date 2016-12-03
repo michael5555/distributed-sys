@@ -14,9 +14,8 @@ import java.net.InetSocketAddress;
 
 import org.apache.avro.ipc.Transceiver;
 
-import avro.proto.sysserver;
+import avro.proto.serverproto;
 
-import avro.server.Controller;
 import avro.proto.Lightinfo;
 import java.util.List;
 
@@ -43,17 +42,17 @@ public class User {
 		try {
 
 			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(6789));
-			sysserver proxy =  (sysserver) SpecificRequestor.getClient(sysserver.class, client);
+			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 			int id = proxy.connect("User");
 			User Bob = new User(id,"Bobby");
-			List<Lightinfo> lights = proxy.sendlights(Bob.getID());
+			List<Lightinfo> lights = proxy.sendLights(Bob.getID());
 			
 			for (Lightinfo temp : lights){
 				
 				System.out.println("we have a light with id: " + temp.getId() + " ,its state is currently: " + temp.getStatus());
 			}
-			proxy.changelightstatus(1);
-			lights = proxy.sendlights(Bob.getID());
+			proxy.changeLightStatus(1);
+			lights = proxy.sendLights(Bob.getID());
 			for (Lightinfo temp : lights){
 				
 				System.out.println("we have a light with id: " + temp.getId() + " ,its state is currently: " + temp.getStatus());

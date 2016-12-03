@@ -9,7 +9,7 @@ import org.apache.avro.ipc.SaslSocketTransceiver;
 import org.apache.avro.ipc.Transceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
 
-import avro.proto.sysserver;
+import avro.proto.serverproto;
 public class TemperatureSensor  {
 	
 	private double measurement;
@@ -27,7 +27,7 @@ public class TemperatureSensor  {
 		return measurement;
 	}
 	
-	public int getID(){
+	public int getId(){
 		
 		return this.id;
 	}
@@ -51,7 +51,7 @@ public class TemperatureSensor  {
 	public static void main(String[] args) {
 		try {
 			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(6789));
-			sysserver proxy =  (sysserver) SpecificRequestor.getClient(sysserver.class, client);
+			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 			int id = proxy.connect("TS");
 			TemperatureSensor s = new TemperatureSensor(id);
 			System.out.println(s.getMeasurement());

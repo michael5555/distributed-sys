@@ -10,7 +10,7 @@ import org.apache.avro.ipc.Transceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
 import org.apache.avro.ipc.specific.SpecificResponder;
 
-import avro.proto.sysserver;
+import avro.proto.serverproto;
 import avro.proto.lightproto;
 
 
@@ -26,16 +26,16 @@ public class Light implements lightproto  {
 		this.id = id;
 	}
 	
-	public int getID(){
+	public int getId(){
 		
 		return this.id;
 	}
 	
-	public void changeState(sysserver proxy){
+	public void changeState(serverproto proxy){
 		
 		state = !state;
 		try{
-			proxy.getlights(this.id, this.state);
+			proxy.getLights(this.id, this.state);
 		}catch(IOException e){}
 		System.out.println(" you changed your state to: " + state);
 	}
@@ -44,7 +44,7 @@ public class Light implements lightproto  {
 		return state;
 	}
 	
-	public int changestatus(int id){
+	public int changeStatus(int id){
 		
 		if(id == this.id){
 			
@@ -59,13 +59,13 @@ public class Light implements lightproto  {
 		Server server = null;
 		try {
 			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(6789));
-			sysserver proxy =  (sysserver) SpecificRequestor.getClient(sysserver.class, client);
+			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 			int id = proxy.connect("Light");
 			Light lampje = new Light(id);
-			server = new SaslSocketServer(new SpecificResponder(lightproto.class, lampje), new InetSocketAddress(6790 + lampje.getID()));
+			server = new SaslSocketServer(new SpecificResponder(lightproto.class, lampje), new InetSocketAddress(6790 + lampje.getId()));
 
 
-			proxy.getlights(lampje.getID(), lampje.getState());
+			proxy.getLights(lampje.getId(), lampje.getState());
 			
 
 		} catch(IOException e){

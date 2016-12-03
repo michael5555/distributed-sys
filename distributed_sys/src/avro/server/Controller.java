@@ -11,7 +11,7 @@ import org.apache.avro.ipc.Transceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
 import org.apache.avro.ipc.specific.SpecificResponder;
 
-import avro.proto.sysserver;
+import avro.proto.serverproto;
 import avro.proto.lightproto;
 
 
@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 
-public class Controller implements sysserver {
+public class Controller implements serverproto {
 
 	private int id;
 	private List<Clientinfo> clients;
@@ -64,7 +64,7 @@ public class Controller implements sysserver {
 	}
 	
 	@Override
-	public int getlights (int id, boolean status) throws AvroRemoteException 
+	public int getLights (int id, boolean status) throws AvroRemoteException 
 	{
 		for(Lightinfo temp : lights){
 			
@@ -87,7 +87,7 @@ public class Controller implements sysserver {
 
 	
 	@Override
-	public List<Lightinfo> sendlights (int id) throws AvroRemoteException 
+	public List<Lightinfo> sendLights (int id) throws AvroRemoteException 
 	{
 		for(Userinfo temp : users){
 			
@@ -100,7 +100,7 @@ public class Controller implements sysserver {
 	}
 	
 	@Override
-	public int changelightstatus(int id){
+	public int changeLightStatus(int id){
 		
 		for(Lightinfo temp : lights){
 			
@@ -109,7 +109,7 @@ public class Controller implements sysserver {
 
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(6790 + id));
 				lightproto proxy =  (lightproto) SpecificRequestor.getClient(lightproto.class, client);
-				proxy.changestatus(id);
+				proxy.changeStatus(id);
 				temp.setStatus(!temp.getStatus());
 				} catch(IOException e){
 					
@@ -133,7 +133,7 @@ public class Controller implements sysserver {
 		Controller controller = new Controller();
 
 		try {
-			server = new SaslSocketServer(new SpecificResponder(sysserver.class, controller), new InetSocketAddress(6789));
+			server = new SaslSocketServer(new SpecificResponder(serverproto.class, controller), new InetSocketAddress(6789));
 		} catch (IOException e) {
 			System.err.println(" error Failed to start server");
 			e.printStackTrace(System.err);
