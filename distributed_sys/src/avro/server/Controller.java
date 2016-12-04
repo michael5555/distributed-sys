@@ -13,6 +13,8 @@ import org.apache.avro.ipc.specific.SpecificResponder;
 
 import avro.proto.serverproto;
 import avro.proto.lightproto;
+import avro.proto.userproto;
+
 
 
 import avro.client.*;
@@ -111,6 +113,7 @@ public class Controller implements serverproto {
 				lightproto proxy =  (lightproto) SpecificRequestor.getClient(lightproto.class, client);
 				proxy.changeStatus(id);
 				temp.setStatus(!temp.getStatus());
+				client.close();
 				} catch(IOException e){
 					
 					System.err.println("Error connecting to light ...");
@@ -125,6 +128,36 @@ public class Controller implements serverproto {
 		return 0;
 	}
 
+	@Override
+	public int changeHomeStatus(int id){
+		
+		for(Userinfo temp: users){
+			
+			if(id == temp.getId()){
+				
+				temp.setAthome(!temp.getAthome());
+			}
+		}
+		for(Userinfo temp: users){
+			
+			if(id != temp.getId()){
+				try {
+
+					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(6790 + temp.getId()));
+					userproto proxy =  (userproto) SpecificRequestor.getClient(userproto.class, client);
+					proxy.reportUserStatus(id);
+					client.close();
+				}catch(IOException e){
+					System.err.println("Error connecting to user ...");
+					e.printStackTrace(System.err);
+					System.exit(1);
+				}
+			}
+		}
+		
+		
+		return 0;
+	}
 
 
 	public static void main( String[] args){

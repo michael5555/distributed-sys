@@ -47,6 +47,10 @@
 		      , "changeLightStatus" : {
 		      "request": [{"name" :  "id", "type" : "int"}],
 		      "response": "int"
+	      	  }
+	      	  , "changeHomeStatus" : {
+		      "request": [{"name" :  "id", "type" : "int"}],
+		      "response": "int"
 	      	  }	
  	 }
  }

@@ -15,13 +15,17 @@ import java.net.InetSocketAddress;
 import org.apache.avro.ipc.Transceiver;
 
 import avro.proto.serverproto;
+import avro.proto.userproto;
+
 
 import avro.proto.Lightinfo;
+import avro.proto.lightproto;
+
 import java.util.List;
 
 
 
-public class User {
+public class User implements userproto {
 	
 	private String username;
 	private int id;
@@ -31,31 +35,35 @@ public class User {
 		this.id = id;
 		this.username = username;
 	}
-	public int getID(){
+	public int getId(){
 		
 		return this.id;
+	}
+	
+	@Override
+	public int reportUserStatus(int id){
+		
+		System.out.println("User with id: " + id + " has left or entered the house.");
+		
+		return 0;
 	}
 	
 
 
 	public static void main(String[] args) {
+		Server server = null;
 		try {
 
 			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(6789));
 			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 			int id = proxy.connect("User");
 			User Bob = new User(id,"Bobby");
-			List<Lightinfo> lights = proxy.sendLights(Bob.getID());
 			
-			for (Lightinfo temp : lights){
+			server = new SaslSocketServer(new SpecificResponder(userproto.class, Bob), new InetSocketAddress(6790 + Bob.getId()));
+
+			if(Bob.getId() == 1){
 				
-				System.out.println("we have a light with id: " + temp.getId() + " ,its state is currently: " + temp.getStatus());
-			}
-			proxy.changeLightStatus(1);
-			lights = proxy.sendLights(Bob.getID());
-			for (Lightinfo temp : lights){
-				
-				System.out.println("we have a light with id: " + temp.getId() + " ,its state is currently: " + temp.getStatus());
+				proxy.changeHomeStatus(Bob.getId());
 			}
 
 			//client.close();
@@ -67,7 +75,11 @@ public class User {
 
 		}
 		
+		server.start();
 		
+		try {
+			server.join();
+		}	catch ( InterruptedException e) { }
 
 
 
