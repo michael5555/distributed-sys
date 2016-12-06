@@ -26,6 +26,13 @@
 	  		{ "name" : "type", "type" : "string" }
 	  		
 	  		
+	  		 ] },
+	  	{ "name" : "TSinfo", "type" : "record" , "fields" : [
+	  
+	  		{ "name" : "id",  "type" : "int" },
+	  		{ "name" : "measurement", "type" : "double" }
+	  		
+	  		
 	  		 ] }
   	
   	
@@ -55,6 +62,20 @@
 	      	  , "sendFridgeItems" : {
 		      "request": [{"name" :  "id", "type" : "int"}],
 		      "response": {"type" : "array", "items" :  "string" }
+	      	  }
+	      	  , "sendTSMeasurement" : {
+	      	  "request": [{"name" :  "measurement", "type" : "double"},{"name" :  "id", "type" : "int"}],
+		      "response": "int"
+		      }
+	      	  ,"getCurrentTemperature" : {
+	      	  "request": [{"name" :  "id", "type" : "int"}],
+		      "response": "double"
+	      	  
+	      	  }
+	      	 ,"getTemperatureHistory" : {
+	      	  "request": [{"name" :  "id", "type" : "int"}],
+		      "response": {"type" : "array", "items" :  "double" }
+	      	  
 	      	  }	
  	 }
  }

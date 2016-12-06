@@ -24,6 +24,8 @@ import avro.client.*;
 import avro.proto.Lightinfo;
 import avro.proto.Clientinfo;
 import avro.proto.Userinfo;
+import avro.proto.TSinfo;
+
 
 
 
@@ -37,7 +39,9 @@ public class Controller implements serverproto {
 	private int id;
 	private List<Clientinfo> clients;
 	private List<Userinfo> users;
-	public List<Lightinfo> lights;
+	private List<Lightinfo> lights;
+	private List<List<TSinfo> > measurements;
+
 
 
 	
@@ -47,6 +51,7 @@ public class Controller implements serverproto {
 		clients = new ArrayList<Clientinfo>();
 		users = new ArrayList<Userinfo>();
 		lights = new ArrayList<Lightinfo>();
+		measurements = new ArrayList<List<TSinfo>>();
 	}
 	
 
@@ -65,10 +70,18 @@ public class Controller implements serverproto {
 			lights.add( new Lightinfo(id,false) );
 		}
 		
-		else {
+		else if (type2.toString().equals("TS")){
 			
-			clients.add(new Clientinfo(id,type2));
+			List<TSinfo> newlist = new ArrayList<TSinfo>();
+			newlist.add(new TSinfo(id,0.0));
+			
+			measurements.add(newlist);
 		}
+		
+	
+			
+		clients.add(new Clientinfo(id,type2));
+		
 		System.out.println(" Client connected: " + type2 + " (number: " + id + " )");
 		return this.id++;
 	}
@@ -86,6 +99,7 @@ public class Controller implements serverproto {
 					return 0;
 					
 				}
+				return 0;
 			}
 		}
 		lights.add(new Lightinfo(id, status));
@@ -250,7 +264,91 @@ public class Controller implements serverproto {
 		return new ArrayList<CharSequence>();
 		
 		
+
+	}
+	
+	@Override
+	public int sendTSMeasurement(double measurement, int id){
+			
+		for(List<TSinfo> temp : measurements){
+			
+			if( temp.get(0).getId() == id){
+				if(temp.size() == 1 && temp.get(0).getMeasurement() == 0.0){
+					
+					temp.remove(0);
+				}
+				temp.add(new TSinfo(id,measurement));
+				
+				if (temp.size() > 10){
+					
+					temp.remove(0);
+				}
+				break;
+			}
+
+		}
 		
+		
+		return 0;
+	}
+	
+	@Override
+	public double getCurrentTemperature(int id){
+		
+		for(Userinfo temp : users){
+			
+			if (temp.getId() == id){
+									
+				double value = 0.0;
+				for(List<TSinfo> templist : measurements) {
+					
+					value += templist.get(templist.size() - 1).getMeasurement();
+				}
+				
+				return value / measurements.size();
+							
+			}
+			
+		}
+		
+		return -1;
+	}
+	
+	@Override
+	public List<Double> getTemperatureHistory(int id){
+		
+		for(Userinfo temp : users){
+			
+			if (temp.getId() == id){
+					
+				List<Double> newlist = new ArrayList<Double>();
+				for(int i = 0; i < measurements.get(0).size();i++){
+					
+					newlist.add(0.0);
+				}
+				for(List<TSinfo> templist : measurements){
+					
+					for(int i = 0; i < templist.size();i++){
+						
+						double d = newlist.get(i);
+						
+						d += templist.get(i).getMeasurement();
+						
+						newlist.set(i,d);
+							
+					}
+				}
+				for(int i = 0; i < newlist.size(); i++){
+					
+					double d = newlist.get(i);
+					d = d/measurements.size();
+					newlist.set(i, d);
+				}
+				return newlist;
+			}
+		}
+		
+		return  new ArrayList<Double>();
 	}
 
 

@@ -67,13 +67,14 @@ public class User implements userproto {
 			
 			server = new SaslSocketServer(new SpecificResponder(userproto.class, Bob), new InetSocketAddress(6790 + Bob.getId()));
 			
-			List<CharSequence> fridgeItems = proxy.sendFridgeItems(0);
+			System.out.println(proxy.getCurrentTemperature(id));
 			
-			for( CharSequence temp : fridgeItems){
+			List<Double> temps = proxy.getTemperatureHistory(id);
+			System.out.print("temp equals ");
+			for(Double temp : temps){
 				
-				System.out.println("fridge currently has: " + temp );
+				System.out.print(temp + " " );
 			}
-
 
 			//client.close();
 		} catch(IOException e){

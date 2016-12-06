@@ -36,7 +36,7 @@ public class TemperatureSensor  {
 		return this.id;
 	}
 	
-	void nextMeasurement() {
+	double nextMeasurement() {
 		
 		double newmeasure = gen.nextGaussian();
 		if(newmeasure > 1){
@@ -47,6 +47,7 @@ public class TemperatureSensor  {
 		}
 		
 		measurement = measurement + newmeasure;
+		return measurement;
 		
 	}
 	
@@ -65,10 +66,13 @@ public class TemperatureSensor  {
 				
 				@Override
 				public void run(){
-					s.nextMeasurement();
-					System.out.println(s.getMeasurement());
+					try {
+
+						proxy.sendTSMeasurement(s.nextMeasurement(),id);
+						System.out.println(s.getMeasurement());
+					}catch(IOException e){}
 				}
-				},0,3000);
+				},0,1000);
 			
 
 
