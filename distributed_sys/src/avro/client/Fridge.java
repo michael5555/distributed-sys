@@ -2,21 +2,32 @@ package avro.client;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.avro.ipc.SaslSocketServer;
 import org.apache.avro.ipc.SaslSocketTransceiver;
+import org.apache.avro.ipc.Server;
 import org.apache.avro.ipc.Transceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
+import org.apache.avro.ipc.specific.SpecificResponder;
 
 import avro.proto.serverproto;
-public class Fridge  {
+
+import avro.proto.fridgeproto;
+import avro.proto.lightproto;
+
+public class Fridge implements fridgeproto  {
 	
-	private Vector<String> items;
+	private List<CharSequence> items;
 	private int id;
 
 
 	public Fridge(int id) {
-		items = new Vector<String>();
+		items = new ArrayList<CharSequence>();
+		items.add("Eggs");
+		items.add("Milk");
+
 		this.id = id;
 
 		
@@ -27,17 +38,30 @@ public class Fridge  {
 		return this.id;
 	}
 	
-	Vector<String> getItems(){
+	public List<CharSequence> getItems(){
 		
 		return items;
 	}
+	
+	@Override
+	public List<CharSequence> sendItems(int id){
+				
+		return items;
+		
+		
+	}
+	
+	
 
 	public static void main(String[] args) {
+		Server server = null;
 		try {
 			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(6789));
 			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 			int id = proxy.connect("Fridge");
 			Fridge kastje = new Fridge(id);
+			server = new SaslSocketServer(new SpecificResponder(fridgeproto.class, kastje), new InetSocketAddress(6790 + kastje.getId()));
+
 
 		} catch(IOException e){
 			
@@ -46,6 +70,12 @@ public class Fridge  {
 			System.exit(1);
 
 		}
+		
+		server.start();
+		
+		try {
+			server.join();
+		}	catch ( InterruptedException e) { }
 	}
 
 }

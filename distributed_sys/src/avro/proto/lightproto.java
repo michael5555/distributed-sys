@@ -8,12 +8,12 @@ package avro.proto;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public interface lightproto {
-  public static final org.apache.avro.Protocol PROTOCOL = org.apache.avro.Protocol.parse("{\"protocol\":\"lightproto\",\"namespace\":\"avro.proto\",\"types\":[],\"messages\":{\"changeStatus\":{\"request\":[{\"name\":\"id\",\"type\":\"int\"}],\"response\":\"int\"}}}");
-  int changeStatus(int id) throws org.apache.avro.AvroRemoteException;
+  public static final org.apache.avro.Protocol PROTOCOL = org.apache.avro.Protocol.parse("{\"protocol\":\"lightproto\",\"namespace\":\"avro.proto\",\"types\":[],\"messages\":{\"changeStatus\":{\"request\":[{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"lightstatus\",\"type\":\"boolean\"}],\"response\":\"int\"}}}");
+  int changeStatus(int id, boolean lightstatus) throws org.apache.avro.AvroRemoteException;
 
   @SuppressWarnings("all")
   public interface Callback extends lightproto {
     public static final org.apache.avro.Protocol PROTOCOL = avro.proto.lightproto.PROTOCOL;
-    void changeStatus(int id, org.apache.avro.ipc.Callback<java.lang.Integer> callback) throws java.io.IOException;
+    void changeStatus(int id, boolean lightstatus, org.apache.avro.ipc.Callback<java.lang.Integer> callback) throws java.io.IOException;
   }
 }

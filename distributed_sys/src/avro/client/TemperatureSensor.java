@@ -10,6 +10,10 @@ import org.apache.avro.ipc.Transceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
 
 import avro.proto.serverproto;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class TemperatureSensor  {
 	
 	private double measurement;
@@ -54,14 +58,18 @@ public class TemperatureSensor  {
 			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 			int id = proxy.connect("TS");
 			TemperatureSensor s = new TemperatureSensor(id);
+			Timer timer = new Timer();
 			System.out.println(s.getMeasurement());
-			while(true){
-				s.nextMeasurement();
-				System.out.println(s.getMeasurement());
-		        Thread.sleep(3000);
-	
-			}
-
+			timer.schedule(new TimerTask(){
+				
+				
+				@Override
+				public void run(){
+					s.nextMeasurement();
+					System.out.println(s.getMeasurement());
+				}
+				},0,3000);
+			
 
 
 		} catch(IOException e){
@@ -71,7 +79,6 @@ public class TemperatureSensor  {
 			System.exit(1);
 
 		}
-		 catch(InterruptedException e){ }
 		
 
 	}

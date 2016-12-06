@@ -1,0 +1,14 @@
+{ 
+  "namespace": "avro.proto",
+  "protocol": "fridgeproto",
+  
+  
+
+	  "messages":
+	  {
+			 "sendItems" : {
+		      "request": [{"name" :  "id", "type" : "int"}],
+		      "response": {"type" : "array", "items" :  "string" } 
+	      	  }	
+ 	 }
+ }

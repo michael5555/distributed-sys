@@ -51,6 +51,10 @@
 	      	  , "changeHomeStatus" : {
 		      "request": [{"name" :  "id", "type" : "int"}],
 		      "response": "int"
+	      	  }
+	      	  , "sendFridgeItems" : {
+		      "request": [{"name" :  "id", "type" : "int"}],
+		      "response": {"type" : "array", "items" :  "string" }
 	      	  }	
  	 }
  }

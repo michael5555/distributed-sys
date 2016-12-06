@@ -14,6 +14,8 @@ import org.apache.avro.ipc.specific.SpecificResponder;
 import avro.proto.serverproto;
 import avro.proto.lightproto;
 import avro.proto.userproto;
+import avro.proto.fridgeproto;
+
 
 
 
@@ -54,7 +56,13 @@ public class Controller implements serverproto {
 	{
 		
 		if(type2.toString().equals("User")){
+			
 			users.add( new Userinfo(id,true) );
+		}
+		
+		else if(type2.toString().equals("Light")){
+			
+			lights.add( new Lightinfo(id,false) );
 		}
 		
 		else {
@@ -111,7 +119,7 @@ public class Controller implements serverproto {
 
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(6790 + id));
 				lightproto proxy =  (lightproto) SpecificRequestor.getClient(lightproto.class, client);
-				proxy.changeStatus(id);
+				proxy.changeStatus(id,!temp.getStatus());
 				temp.setStatus(!temp.getStatus());
 				client.close();
 				} catch(IOException e){
@@ -127,15 +135,31 @@ public class Controller implements serverproto {
 		
 		return 0;
 	}
+	
+	public boolean nobodyAtHome(){
+		for(Userinfo temp: users){
+			
+			if(temp.getAthome() == true){
+				
+				return false;
+			}
+		}
+		
+		return true;
+		
+	}
 
 	@Override
 	public int changeHomeStatus(int id){
+		
+		boolean homestatus = false;
 		
 		for(Userinfo temp: users){
 			
 			if(id == temp.getId()){
 				
 				temp.setAthome(!temp.getAthome());
+				homestatus = temp.getAthome();
 			}
 		}
 		for(Userinfo temp: users){
@@ -145,7 +169,7 @@ public class Controller implements serverproto {
 
 					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(6790 + temp.getId()));
 					userproto proxy =  (userproto) SpecificRequestor.getClient(userproto.class, client);
-					proxy.reportUserStatus(id);
+					proxy.reportUserStatus(id,homestatus);
 					client.close();
 				}catch(IOException e){
 					System.err.println("Error connecting to user ...");
@@ -155,8 +179,78 @@ public class Controller implements serverproto {
 			}
 		}
 		
+		if(nobodyAtHome()){
+			
+			for(Lightinfo temp : lights){
+				try {
+
+					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(6790 + temp.getId()));
+					lightproto proxy =  (lightproto) SpecificRequestor.getClient(lightproto.class, client);
+					proxy.changeStatus(temp.getId(),false);
+					client.close();
+					} catch(IOException e){
+						
+						System.err.println("Error connecting to light ...");
+						e.printStackTrace(System.err);
+						System.exit(1);
+
+					}
+				
+			}
+		}
+		else{
+			
+			for(Lightinfo temp : lights){
+				try {
+
+					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(6790 + temp.getId()));
+					lightproto proxy =  (lightproto) SpecificRequestor.getClient(lightproto.class, client);
+					proxy.changeStatus(temp.getId(),temp.getStatus());
+					client.close();
+					} catch(IOException e){
+						
+						System.err.println("Error connecting to light ...");
+						e.printStackTrace(System.err);
+						System.exit(1);
+
+					}
+			}
+			
+		}
+		
 		
 		return 0;
+	}
+	
+	@Override
+	public List<CharSequence> sendFridgeItems(int id){
+		
+		for(Clientinfo temp : clients){
+
+
+			if (temp.getId() == id && temp.getType().toString().equals("Fridge")){
+
+				try {
+
+					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(6790 + temp.getId()));
+					fridgeproto proxy =  (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client);
+					List<CharSequence> items = proxy.sendItems(temp.getId());
+					client.close();
+					return items;
+					} catch(IOException e){
+						
+						System.err.println("Error connecting to light ...");
+						e.printStackTrace(System.err);
+						System.exit(1);
+
+					}
+			}
+		}
+		
+		return new ArrayList<CharSequence>();
+		
+		
+		
 	}
 
 

@@ -41,10 +41,16 @@ public class User implements userproto {
 	}
 	
 	@Override
-	public int reportUserStatus(int id){
+	public int reportUserStatus(int id, boolean athome){
 		
-		System.out.println("User with id: " + id + " has left or entered the house.");
+		if(athome){
 		
+			System.out.println("User with id: " + id + " has  entered the house.");
+		}
+		else{
+			System.out.println("User with id: " + id + " has  left the house.");
+
+		}
 		return 0;
 	}
 	
@@ -60,11 +66,14 @@ public class User implements userproto {
 			User Bob = new User(id,"Bobby");
 			
 			server = new SaslSocketServer(new SpecificResponder(userproto.class, Bob), new InetSocketAddress(6790 + Bob.getId()));
-
-			if(Bob.getId() == 1){
+			
+			List<CharSequence> fridgeItems = proxy.sendFridgeItems(0);
+			
+			for( CharSequence temp : fridgeItems){
 				
-				proxy.changeHomeStatus(Bob.getId());
+				System.out.println("fridge currently has: " + temp );
 			}
+
 
 			//client.close();
 		} catch(IOException e){

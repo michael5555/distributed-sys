@@ -44,11 +44,11 @@ public class Light implements lightproto  {
 		return state;
 	}
 	
-	public int changeStatus(int id){
+	public int changeStatus(int id, boolean lightstatus){
 		
 		if(id == this.id){
 			
-			this.state = !this.state;
+			this.state = lightstatus;
 			return 0;
 		}
 		
@@ -58,6 +58,8 @@ public class Light implements lightproto  {
 	public static void main(String[] args) {
 		Server server = null;
 		try {
+			
+			
 			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(6789));
 			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 			int id = proxy.connect("Light");
@@ -65,7 +67,7 @@ public class Light implements lightproto  {
 			server = new SaslSocketServer(new SpecificResponder(lightproto.class, lampje), new InetSocketAddress(6790 + lampje.getId()));
 
 
-			proxy.getLights(lampje.getId(), lampje.getState());
+			//proxy.getLights(lampje.getId(), lampje.getState());
 			
 
 		} catch(IOException e){
