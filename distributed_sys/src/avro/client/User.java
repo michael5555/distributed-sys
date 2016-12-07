@@ -1,6 +1,7 @@
 package avro.client;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 import org.apache.avro.AvroRemoteException;
@@ -60,12 +61,12 @@ public class User implements userproto {
 		Server server = null;
 		try {
 
-			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(6789));
+			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),6789));
 			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 			int id = proxy.connect("User");
 			User Bob = new User(id,"Bobby");
 			
-			server = new SaslSocketServer(new SpecificResponder(userproto.class, Bob), new InetSocketAddress(6790 + Bob.getId()));
+			server = new SaslSocketServer(new SpecificResponder(userproto.class, Bob), new InetSocketAddress(InetAddress.getLocalHost(),6790 + Bob.getId()));
 			
 			System.out.println(proxy.getCurrentTemperature(id));
 			

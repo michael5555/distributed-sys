@@ -1,6 +1,7 @@
 package avro.server;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 import org.apache.avro.AvroRemoteException;
@@ -358,7 +359,7 @@ public class Controller implements serverproto {
 		Controller controller = new Controller();
 
 		try {
-			server = new SaslSocketServer(new SpecificResponder(serverproto.class, controller), new InetSocketAddress(6789));
+			server = new SaslSocketServer(new SpecificResponder(serverproto.class, controller), new InetSocketAddress(InetAddress.getLocalHost(),6789));
 		} catch (IOException e) {
 			System.err.println(" error Failed to start server");
 			e.printStackTrace(System.err);

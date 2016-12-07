@@ -1,6 +1,7 @@
 package avro.client;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,11 +57,11 @@ public class Fridge implements fridgeproto  {
 	public static void main(String[] args) {
 		Server server = null;
 		try {
-			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(6789));
+			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),6789));
 			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 			int id = proxy.connect("Fridge");
 			Fridge kastje = new Fridge(id);
-			server = new SaslSocketServer(new SpecificResponder(fridgeproto.class, kastje), new InetSocketAddress(6790 + kastje.getId()));
+			server = new SaslSocketServer(new SpecificResponder(fridgeproto.class, kastje), new InetSocketAddress(InetAddress.getLocalHost(),6790 + kastje.getId()));
 
 
 		} catch(IOException e){

@@ -1,6 +1,7 @@
 package avro.client;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 import org.apache.avro.ipc.SaslSocketServer;
@@ -60,11 +61,11 @@ public class Light implements lightproto  {
 		try {
 			
 			
-			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(6789));
+			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),6789));
 			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 			int id = proxy.connect("Light");
 			Light lampje = new Light(id);
-			server = new SaslSocketServer(new SpecificResponder(lightproto.class, lampje), new InetSocketAddress(6790 + lampje.getId()));
+			server = new SaslSocketServer(new SpecificResponder(lightproto.class, lampje), new InetSocketAddress(InetAddress.getLocalHost(),6790 + lampje.getId()));
 
 
 			//proxy.getLights(lampje.getId(), lampje.getState());
