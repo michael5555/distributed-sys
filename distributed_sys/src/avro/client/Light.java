@@ -50,6 +50,13 @@ public class Light implements lightproto  {
 		if(id == this.id){
 			
 			this.state = lightstatus;
+			if(this.state){
+				System.out.println("light with id: " + this.id + " has been turned on");
+			}
+			else{
+				System.out.println("light with id: " + this.id + " has been turned off");
+
+			}
 			return 0;
 		}
 		

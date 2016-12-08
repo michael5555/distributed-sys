@@ -263,7 +263,7 @@ public class Controller implements serverproto {
 						return items;
 					} catch(IOException e){
 						
-						System.err.println("Error connecting to light ...");
+						System.err.println("Error connecting to fridge ...");
 						e.printStackTrace(System.err);
 						System.exit(1);
 

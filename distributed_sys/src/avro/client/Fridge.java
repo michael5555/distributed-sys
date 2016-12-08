@@ -61,7 +61,7 @@ public class Fridge implements fridgeproto  {
 			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 			int id = proxy.connect("Fridge");
 			Fridge kastje = new Fridge(id);
-			server = new SaslSocketServer(new SpecificResponder(fridgeproto.class, kastje), new InetSocketAddress(InetAddress.getLocalHost(),6790 + kastje.getId()));
+			server = new SaslSocketServer(new SpecificResponder(fridgeproto.class, kastje), new InetSocketAddress(InetAddress.getLocalHost(),kastje.getId()));
 
 
 		} catch(IOException e){

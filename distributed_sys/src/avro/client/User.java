@@ -96,6 +96,51 @@ public class User implements userproto {
 		}catch(IOException e){}
 	}
 	
+	@Command
+	public void printFridgeItems(int id){
+		
+		try{
+			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
+			serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
+			
+			List<CharSequence> items = proxy.sendFridgeItems(id);
+			
+			for(CharSequence temp : items){
+				System.out.println("Fridge has : " + temp);
+			}
+	
+		}catch(IOException e){}
+	}
+	
+	@Command
+	public void printCurrentTemperature(){
+		
+		try{
+			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
+			serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
+			
+			double value = proxy.getCurrentTemperature(this.id);
+			System.out.println("Current temperature: "  + value);
+	
+		}catch(IOException e){}
+	}
+	
+	@Command
+	public void printTemperatureHistory(int id){
+		
+		try{
+			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
+			serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
+			
+			List<Double> temps = proxy.getTemperatureHistory(id);
+			System.out.println("Temperature History : ");
+			for(Double temp : temps){
+				System.out.print( temp + ", ");
+			}
+	
+		}catch(IOException e){}
+	}
+	
 
 
 	public static void main(String[] args) {
