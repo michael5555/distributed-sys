@@ -61,7 +61,7 @@ public class User implements userproto {
 		Server server = null;
 		try {
 
-			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),6789));
+			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
 			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 			int id = proxy.connect("User");
 			User Bob = new User(id,"Bobby");

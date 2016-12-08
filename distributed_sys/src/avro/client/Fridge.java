@@ -57,7 +57,7 @@ public class Fridge implements fridgeproto  {
 	public static void main(String[] args) {
 		Server server = null;
 		try {
-			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),6789));
+			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
 			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 			int id = proxy.connect("Fridge");
 			Fridge kastje = new Fridge(id);

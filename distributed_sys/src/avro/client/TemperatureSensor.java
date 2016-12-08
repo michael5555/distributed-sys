@@ -56,7 +56,7 @@ public class TemperatureSensor  {
 
 	public static void main(String[] args) {
 		try {
-			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),6789));
+			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
 			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 			int id = proxy.connect("TS");
 			TemperatureSensor s = new TemperatureSensor(id);

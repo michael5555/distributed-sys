@@ -37,6 +37,7 @@ import java.util.ArrayList;
 
 public class Controller implements serverproto {
 
+	private final int  port = 5000;
 	private int id;
 	private List<Clientinfo> clients;
 	private List<Userinfo> users;
@@ -48,14 +49,17 @@ public class Controller implements serverproto {
 	
 	public Controller(){
 		
-		this.id = 0;
+		this.id = 1;
 		clients = new ArrayList<Clientinfo>();
 		users = new ArrayList<Userinfo>();
 		lights = new ArrayList<Lightinfo>();
 		measurements = new ArrayList<List<TSinfo>>();
 	}
 	
-
+	public int getPort(){
+		
+		return this.port;
+	}
 	
 	@Override
 	public int connect(CharSequence type2) throws AvroRemoteException
@@ -63,28 +67,28 @@ public class Controller implements serverproto {
 		
 		if(type2.toString().equals("User")){
 			
-			users.add( new Userinfo(id,true) );
+			users.add( new Userinfo(port + id,true) );
 		}
 		
 		else if(type2.toString().equals("Light")){
 			
-			lights.add( new Lightinfo(id,false) );
+			lights.add( new Lightinfo(port + id,false) );
 		}
 		
 		else if (type2.toString().equals("TS")){
 			
 			List<TSinfo> newlist = new ArrayList<TSinfo>();
-			newlist.add(new TSinfo(id,0.0));
+			newlist.add(new TSinfo( port + id,0.0));
 			
 			measurements.add(newlist);
 		}
 		
 	
 			
-		clients.add(new Clientinfo(id,type2));
+		clients.add(new Clientinfo(port + id,type2));
 		
 		System.out.println(" Client connected: " + type2 + " (number: " + id + " )");
-		return this.id++;
+		return  port + this.id++;
 	}
 	
 	@Override
@@ -132,7 +136,7 @@ public class Controller implements serverproto {
 			if( id == temp.getId()){
 				try {
 
-				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(6790 + id));
+				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),id));
 				lightproto proxy =  (lightproto) SpecificRequestor.getClient(lightproto.class, client);
 				proxy.changeStatus(id,!temp.getStatus());
 				temp.setStatus(!temp.getStatus());
@@ -182,7 +186,7 @@ public class Controller implements serverproto {
 			if(id != temp.getId()){
 				try {
 
-					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(6790 + temp.getId()));
+					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),temp.getId()));
 					userproto proxy =  (userproto) SpecificRequestor.getClient(userproto.class, client);
 					proxy.reportUserStatus(id,homestatus);
 					client.close();
@@ -199,7 +203,7 @@ public class Controller implements serverproto {
 			for(Lightinfo temp : lights){
 				try {
 
-					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(6790 + temp.getId()));
+					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),temp.getId()));
 					lightproto proxy =  (lightproto) SpecificRequestor.getClient(lightproto.class, client);
 					proxy.changeStatus(temp.getId(),false);
 					client.close();
@@ -218,7 +222,7 @@ public class Controller implements serverproto {
 			for(Lightinfo temp : lights){
 				try {
 
-					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(6790 + temp.getId()));
+					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),temp.getId()));
 					lightproto proxy =  (lightproto) SpecificRequestor.getClient(lightproto.class, client);
 					proxy.changeStatus(temp.getId(),temp.getStatus());
 					client.close();
@@ -247,7 +251,7 @@ public class Controller implements serverproto {
 
 				try {
 
-					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(6790 + temp.getId()));
+					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),temp.getId()));
 					fridgeproto proxy =  (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client);
 					List<CharSequence> items = proxy.sendItems(temp.getId());
 					client.close();
@@ -359,7 +363,7 @@ public class Controller implements serverproto {
 		Controller controller = new Controller();
 
 		try {
-			server = new SaslSocketServer(new SpecificResponder(serverproto.class, controller), new InetSocketAddress(InetAddress.getLocalHost(),6789));
+			server = new SaslSocketServer(new SpecificResponder(serverproto.class, controller), new InetSocketAddress(InetAddress.getLocalHost(),controller.getPort()));
 		} catch (IOException e) {
 			System.err.println(" error Failed to start server");
 			e.printStackTrace(System.err);
