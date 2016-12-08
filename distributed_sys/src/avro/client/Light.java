@@ -65,7 +65,7 @@ public class Light implements lightproto  {
 			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 			int id = proxy.connect("Light");
 			Light lampje = new Light(id);
-			server = new SaslSocketServer(new SpecificResponder(lightproto.class, lampje), new InetSocketAddress(InetAddress.getLocalHost(),6790 + lampje.getId()));
+			server = new SaslSocketServer(new SpecificResponder(lightproto.class, lampje), new InetSocketAddress(InetAddress.getLocalHost(),lampje.getId()));
 
 
 			//proxy.getLights(lampje.getId(), lampje.getState());

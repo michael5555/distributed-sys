@@ -24,6 +24,8 @@ import avro.proto.lightproto;
 
 import java.util.List;
 
+import asg.cliche.*;
+
 
 
 public class User implements userproto {
@@ -55,6 +57,45 @@ public class User implements userproto {
 		return 0;
 	}
 	
+	@Command
+	public void printLights(){
+		
+		try{
+			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
+			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
+
+			List<Lightinfo> lights = proxy.sendLights(this.id);
+			for(Lightinfo temp : lights){
+				
+				System.out.println("We have a light with id: " + temp.getId() + " ,its status is currently: " +  temp.getStatus());
+			}
+		}catch(IOException e){}
+	}
+	@Command
+	public void changeLightStatus(int id){
+		
+		try{
+			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
+			serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
+
+			proxy.changeLightStatus(id);
+
+		}catch(IOException e){}
+	}
+	
+
+	@Command
+	public void changeHomeStatus(){
+		
+		try{
+			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
+			serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
+			
+			proxy.changeHomeStatus(this.id);
+	
+		}catch(IOException e){}
+	}
+	
 
 
 	public static void main(String[] args) {
@@ -65,19 +106,13 @@ public class User implements userproto {
 			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 			int id = proxy.connect("User");
 			User Bob = new User(id,"Bobby");
-			
-			server = new SaslSocketServer(new SpecificResponder(userproto.class, Bob), new InetSocketAddress(InetAddress.getLocalHost(),6790 + Bob.getId()));
-			
-			System.out.println(proxy.getCurrentTemperature(id));
-			
-			List<Double> temps = proxy.getTemperatureHistory(id);
-			System.out.print("temp equals ");
-			for(Double temp : temps){
-				
-				System.out.print(temp + " " );
-			}
 
-			//client.close();
+
+			server = new SaslSocketServer(new SpecificResponder(userproto.class, Bob), new InetSocketAddress(InetAddress.getLocalHost(),Bob.getId()));
+			
+			server.start();
+			ShellFactory.createConsoleShell("user", "", Bob).commandLoop(); // and three.
+
 		} catch(IOException e){
 			
 			System.err.println("Error connecting to server ...");
@@ -86,7 +121,7 @@ public class User implements userproto {
 
 		}
 		
-		server.start();
+
 		
 		try {
 			server.join();

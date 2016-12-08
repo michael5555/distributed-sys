@@ -76,6 +76,7 @@
 	      	  "request": [{"name" :  "id", "type" : "int"}],
 		      "response": {"type" : "array", "items" :  "double" }
 	      	  
-	      	  }	
+	      	  }
+	      	  	
  	 }
  }

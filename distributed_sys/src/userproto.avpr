@@ -9,6 +9,6 @@
 			 "reportUserStatus" : {
 		      "request": [{"name" :  "id", "type" : "int"},{"name" :  "athome", "type" : "boolean"}],
 		      "response": "int"
-	      	  }	
+	      	  }
  	 }
  }

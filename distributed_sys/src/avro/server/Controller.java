@@ -87,9 +87,11 @@ public class Controller implements serverproto {
 			
 		clients.add(new Clientinfo(port + id,type2));
 		
-		System.out.println(" Client connected: " + type2 + " (number: " + id + " )");
+		System.out.println(" Client connected: " + type2 + " (number: " +  (port + id) + " )");
 		return  port + this.id++;
 	}
+	
+
 	
 	@Override
 	public int getLights (int id, boolean status) throws AvroRemoteException 
@@ -172,24 +174,26 @@ public class Controller implements serverproto {
 	public int changeHomeStatus(int id){
 		
 		boolean homestatus = false;
-		
 		for(Userinfo temp: users){
 			
 			if(id == temp.getId()){
 				
 				temp.setAthome(!temp.getAthome());
 				homestatus = temp.getAthome();
+
+				break;
 			}
 		}
+
 		for(Userinfo temp: users){
 			
 			if(id != temp.getId()){
 				try {
-
 					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),temp.getId()));
-					userproto proxy =  (userproto) SpecificRequestor.getClient(userproto.class, client);
-					proxy.reportUserStatus(id,homestatus);
+					userproto prox =  (userproto) SpecificRequestor.getClient(userproto.class, client);
+					prox.reportUserStatus(id,homestatus);
 					client.close();
+
 				}catch(IOException e){
 					System.err.println("Error connecting to user ...");
 					e.printStackTrace(System.err);
@@ -197,7 +201,8 @@ public class Controller implements serverproto {
 				}
 			}
 		}
-		
+
+
 		if(nobodyAtHome()){
 			
 			for(Lightinfo temp : lights){
@@ -251,11 +256,11 @@ public class Controller implements serverproto {
 
 				try {
 
-					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),temp.getId()));
-					fridgeproto proxy =  (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client);
-					List<CharSequence> items = proxy.sendItems(temp.getId());
-					client.close();
-					return items;
+						Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),temp.getId()));
+						fridgeproto proxy =  (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client);
+						List<CharSequence> items = proxy.sendItems(temp.getId());
+						client.close();
+						return items;
 					} catch(IOException e){
 						
 						System.err.println("Error connecting to light ...");
