@@ -8,12 +8,14 @@ package avro.proto;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public interface userproto {
-  public static final org.apache.avro.Protocol PROTOCOL = org.apache.avro.Protocol.parse("{\"protocol\":\"userproto\",\"namespace\":\"avro.proto\",\"types\":[],\"messages\":{\"reportUserStatus\":{\"request\":[{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"athome\",\"type\":\"boolean\"}],\"response\":\"int\"}}}");
+  public static final org.apache.avro.Protocol PROTOCOL = org.apache.avro.Protocol.parse("{\"protocol\":\"userproto\",\"namespace\":\"avro.proto\",\"types\":[],\"messages\":{\"reportUserStatus\":{\"request\":[{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"athome\",\"type\":\"boolean\"}],\"response\":\"int\"},\"reportFridgeEmpty\":{\"request\":[{\"name\":\"id\",\"type\":\"int\"}],\"response\":\"int\"}}}");
   int reportUserStatus(int id, boolean athome) throws org.apache.avro.AvroRemoteException;
+  int reportFridgeEmpty(int id) throws org.apache.avro.AvroRemoteException;
 
   @SuppressWarnings("all")
   public interface Callback extends userproto {
     public static final org.apache.avro.Protocol PROTOCOL = avro.proto.userproto.PROTOCOL;
     void reportUserStatus(int id, boolean athome, org.apache.avro.ipc.Callback<java.lang.Integer> callback) throws java.io.IOException;
+    void reportFridgeEmpty(int id, org.apache.avro.ipc.Callback<java.lang.Integer> callback) throws java.io.IOException;
   }
 }

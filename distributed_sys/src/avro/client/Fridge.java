@@ -76,17 +76,22 @@ public class Fridge implements fridgeproto  {
 	
 	@Override
 	public int removeItem(int id, CharSequence item){
-		System.out.println(1);
 		if(id == this.id && open){
-			System.out.println(2);
 
 			for(CharSequence temp : items){
-				System.out.println(3);
 
 				if (temp.equals(item)){
-					System.out.println(4);
 
 					items.remove(item);
+					if(items.size() == 0){
+						
+						try{
+							Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
+							serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
+							proxy.FridgeEmptyMessage(this.id);
+						}catch(IOException e){}
+
+					}
 					return 0;
 				}
 			}

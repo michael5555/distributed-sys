@@ -363,7 +363,6 @@ public class Controller implements serverproto {
 	
 	@Override
 	public int openFridge(int id){
-		System.out.println("2");
 
 		for(Clientinfo temp : clients){
 
@@ -371,7 +370,6 @@ public class Controller implements serverproto {
 				try{
 					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),temp.getId()));
 					fridgeproto proxy =  (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client);
-					System.out.println("4");
 
 					return proxy.openFridge(id);
 				}catch(IOException e){}
@@ -379,6 +377,28 @@ public class Controller implements serverproto {
 		}
 		
 		return -1;
+	}
+	
+	@Override
+	public int FridgeEmptyMessage(int id){
+		
+		for(Userinfo temp: users){
+			
+			try {
+				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),temp.getId()));
+				userproto prox =  (userproto) SpecificRequestor.getClient(userproto.class, client);
+				prox.reportFridgeEmpty(id);
+				client.close();
+
+			}catch(IOException e){
+				System.err.println("Error connecting to user ...");
+				e.printStackTrace(System.err);
+				System.exit(1);
+			}
+			
+		}
+		return 0;
+		
 	}
 
 

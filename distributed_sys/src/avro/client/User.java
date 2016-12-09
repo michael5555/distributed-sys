@@ -60,6 +60,13 @@ public class User implements userproto {
 		return 0;
 	}
 	
+	@Override
+	public int reportFridgeEmpty(int id) {
+		
+		System.out.println("Fridge with id: " + id + " is empty");
+		return 0;
+	}
+	
 	@Command
 	public void printLights(){
 		if(!fridgeTime){

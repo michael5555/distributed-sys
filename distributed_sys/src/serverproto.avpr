@@ -82,6 +82,11 @@
 		      "response": {"name" : "success", "type" :  "int" }
 	      	  
 	      	  }
+	      	  ,"FridgeEmptyMessage" : {
+	      	  "request": [{"name" :  "id", "type" : "int"}],
+		      "response": {"name" : "success", "type" :  "int" }
+	      	  
+	      	  }
 	      	  	
  	 }
  }

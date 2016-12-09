@@ -10,5 +10,9 @@
 		      "request": [{"name" :  "id", "type" : "int"},{"name" :  "athome", "type" : "boolean"}],
 		      "response": "int"
 	      	  }
+	      	  ,"reportFridgeEmpty" : {
+		      "request": [{"name" :  "id", "type" : "int"}],
+		      "response": "int"
+	      	  }
  	 }
  }
