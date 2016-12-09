@@ -76,6 +76,11 @@
 	      	  "request": [{"name" :  "id", "type" : "int"}],
 		      "response": {"type" : "array", "items" :  "double" }
 	      	  
+	      	  }	      	 
+	      	  ,"openFridge" : {
+	      	  "request": [{"name" :  "id", "type" : "int"}],
+		      "response": {"name" : "success", "type" :  "int" }
+	      	  
 	      	  }
 	      	  	
  	 }

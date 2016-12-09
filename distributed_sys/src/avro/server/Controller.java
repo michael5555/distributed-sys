@@ -360,6 +360,26 @@ public class Controller implements serverproto {
 		
 		return  new ArrayList<Double>();
 	}
+	
+	@Override
+	public int openFridge(int id){
+		System.out.println("2");
+
+		for(Clientinfo temp : clients){
+
+			if(id == temp.getId() && temp.getType().toString().equals("Fridge")){
+				try{
+					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),temp.getId()));
+					fridgeproto proxy =  (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client);
+					System.out.println("4");
+
+					return proxy.openFridge(id);
+				}catch(IOException e){}
+			}
+		}
+		
+		return -1;
+	}
 
 
 	public static void main( String[] args){

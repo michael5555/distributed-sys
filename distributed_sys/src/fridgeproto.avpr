@@ -9,6 +9,22 @@
 			 "sendItems" : {
 		      "request": [{"name" :  "id", "type" : "int"}],
 		      "response": {"type" : "array", "items" :  "string" } 
+	      	  }
+	      	  ,"openFridge" : {
+		      "request": [{"name" :  "id", "type" : "int"}],
+		      "response": {"name" : "success", "type" :  "int" } 
+	      	  }	      	  
+	      	  ,"addItem" : {
+		      "request": [{"name" :  "id", "type" : "int"}, {"name" :  "item", "type" : "string"} ],
+		      "response": {"name" : "success", "type" :  "int" } 
+	      	  }
+	      	  ,"removeItem" : {
+		      "request": [{"name" :  "id", "type" : "int"}, {"name" :  "item", "type" : "string"} ],
+		      "response": {"name" : "success", "type" :  "int" } 
+	      	  }
+	      	  ,"closeFridge" : {
+		      "request": [{"name" :  "id", "type" : "int"}],
+		      "response": {"name" : "success", "type" :  "int" } 
 	      	  }	
  	 }
  }
