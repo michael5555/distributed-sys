@@ -131,6 +131,20 @@ public class Controller implements serverproto {
 	}
 	
 	@Override
+	public List<Clientinfo> sendClients (int id) throws AvroRemoteException 
+	{
+
+		for(Userinfo temp : users){
+
+			if(temp.getId() == id){
+
+				return clients;
+			}
+		}
+			return new ArrayList<Clientinfo>();
+	}
+	
+	@Override
 	public int changeLightStatus(int id){
 		
 		for(Lightinfo temp : lights){

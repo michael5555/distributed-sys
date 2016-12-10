@@ -20,6 +20,8 @@ import avro.proto.userproto;
 
 
 import avro.proto.Lightinfo;
+import avro.proto.Clientinfo;
+
 import avro.proto.lightproto;
 
 import avro.proto.fridgeproto;
@@ -81,6 +83,25 @@ public class User implements userproto {
 				for(Lightinfo temp : lights){
 					
 					System.out.println("We have a light with id: " + temp.getId() + " ,its status is currently: " +  temp.getStatus());
+				}
+			}catch(IOException e){}
+		}
+		else{
+			System.out.println("Right now you are connected to a Fridge");
+		}
+	}
+	
+	@Command
+	public void printClients(){
+		if(!fridgeTime){
+			try{
+				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
+				serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
+				List<Clientinfo> clients = proxy.sendClients(this.id);
+
+				for(Clientinfo temp : clients){
+
+					System.out.println("We have a client with id: " + temp.getId() + " ,its type is: " +  temp.getType());
 				}
 			}catch(IOException e){}
 		}

@@ -43,13 +43,17 @@
 		      "request": [{"name" :  "type2", "type" : "string"}],
 		      "response": "int"
 		      }
-		  	, "getLights": {
+		  	 ,"getLights": {
 		      "request": [{"name" :  "id", "type" : "int"}, {"name" : "status" , "type" : "boolean"}],
 		      "response": "int"
 		      }
-		    , "sendLights": {
+		     ,"sendLights": {
 		      "request": [{"name" : "id",  "type" :  "int" }],
 		      "response": {"type" : "array", "items" :  "Lightinfo" } 
+		      }
+		      ,"sendClients": {
+		      "request": [{"name" : "id",  "type" :  "int" }],
+		      "response": {"type" : "array", "items" :  "Clientinfo" } 
 		      }
 		      , "changeLightStatus" : {
 		      "request": [{"name" :  "id", "type" : "int"}],
@@ -70,7 +74,6 @@
 	      	  ,"getCurrentTemperature" : {
 	      	  "request": [{"name" :  "id", "type" : "int"}],
 		      "response": "double"
-	      	  
 	      	  }
 	      	 ,"getTemperatureHistory" : {
 	      	  "request": [{"name" :  "id", "type" : "int"}],
