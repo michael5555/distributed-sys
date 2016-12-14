@@ -71,11 +71,11 @@ public class Light implements lightproto  {
 			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
 			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 			int id = proxy.connect("Light");
+			client.close();
 			Light lampje = new Light(id);
 			server = new SaslSocketServer(new SpecificResponder(lightproto.class, lampje), new InetSocketAddress(InetAddress.getLocalHost(),lampje.getId()));
 
 
-			//proxy.getLights(lampje.getId(), lampje.getState());
 			
 
 		} catch(IOException e){
@@ -90,7 +90,10 @@ public class Light implements lightproto  {
 		
 		try {
 			server.join();
-		}	catch ( InterruptedException e) { }
+
+		}	catch ( Exception e) {
+			
+		}
 
 		
 		

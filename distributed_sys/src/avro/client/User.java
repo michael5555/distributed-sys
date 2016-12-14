@@ -77,6 +77,7 @@ public class User implements userproto {
 				serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 	
 				List<Lightinfo> lights = proxy.sendLights(this.id);
+				client.close();
 				if (lights.size() == 0){
 					System.out.println("There are no lights");
 				}
@@ -98,7 +99,7 @@ public class User implements userproto {
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
 				serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 				List<Clientinfo> clients = proxy.sendClients(this.id);
-
+				client.close();
 				for(Clientinfo temp : clients){
 
 					System.out.println("We have a client with id: " + temp.getId() + " ,its type is: " +  temp.getType());
@@ -117,7 +118,7 @@ public class User implements userproto {
 				serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 	
 				proxy.changeLightStatus(id);
-	
+				client.close();
 			}catch(IOException e){}
 		}		
 		else{
@@ -134,7 +135,8 @@ public class User implements userproto {
 				serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 				
 				proxy.changeHomeStatus(this.id);
-		
+				client.close();
+
 			}catch(IOException e){}
 		}
 		else{
@@ -150,6 +152,8 @@ public class User implements userproto {
 				serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 				
 				List<CharSequence> items = proxy.sendFridgeItems(id);
+				client.close();
+
 				if (items.size() == 0){
 					System.out.println("Fridge with id: " + id + " is empty");
 				}
@@ -173,6 +177,8 @@ public class User implements userproto {
 				serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 				
 				double value = proxy.getCurrentTemperature(this.id);
+				client.close();
+
 				System.out.println("Current temperature: "  + value);
 		
 			}catch(IOException e){}
@@ -190,6 +196,7 @@ public class User implements userproto {
 				serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 				
 				List<Double> temps = proxy.getTemperatureHistory(id);
+				client.close();
 				System.out.println("Temperature History : ");
 				for(Double temp : temps){
 					System.out.print( temp + ", ");
@@ -208,12 +215,13 @@ public class User implements userproto {
 			try{
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
 				serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
-				System.out.println(1);
 				if(proxy.openFridge(id) == 0){
 					
 					System.out.println("Fridge with id: " + id + " has been opened.");
 					fridgeTime = true;
 				}
+				client.close();
+
 			}catch(IOException e){}
 		}
 		else{
@@ -232,6 +240,8 @@ public class User implements userproto {
 					System.out.println("Added item: " + item + " to fridge with id: "  + id);
 
 				}
+				client.close();
+
 
 			}catch (IOException e){}
 			
@@ -252,6 +262,8 @@ public class User implements userproto {
 					System.out.println("removed item: " + item + " from fridge with id: "  + id);
 
 				}
+				client.close();
+
 			}catch (IOException e){}
 			
 		}
@@ -272,6 +284,8 @@ public class User implements userproto {
 					fridgeTime = false;
 					System.out.println("fridge with id: "  + id +  " has been closed");
 				}
+				client.close();
+
 
 			}catch (IOException e){}
 			
@@ -292,6 +306,7 @@ public class User implements userproto {
 			int id = proxy.connect("User");
 			User Bob = new User(id,"Bobby");
 
+			client.close();
 
 			server = new SaslSocketServer(new SpecificResponder(userproto.class, Bob), new InetSocketAddress(InetAddress.getLocalHost(),Bob.getId()));
 			

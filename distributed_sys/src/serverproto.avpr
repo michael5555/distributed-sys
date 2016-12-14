@@ -90,6 +90,11 @@
 		      "response": {"name" : "success", "type" :  "int" }
 	      	  
 	      	  }
+	      	  ,"deleteClient" : {
+	      	  "request": [{"name" :  "id", "type" : "int"}],
+		      "response": {"name" : "success", "type" :  "int" }
+	      	  
+	      	  }
 	      	  	
  	 }
  }

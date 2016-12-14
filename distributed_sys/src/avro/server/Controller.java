@@ -17,10 +17,13 @@ import avro.proto.lightproto;
 import avro.proto.userproto;
 import avro.proto.fridgeproto;
 
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 
-import avro.client.*;
+
+
 
 import avro.proto.Lightinfo;
 import avro.proto.Clientinfo;
@@ -35,7 +38,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 
-public class Controller implements serverproto {
+public class Controller extends Thread implements serverproto, Runnable  {
 
 	private final int  port = 5000;
 	private int id;
@@ -43,6 +46,7 @@ public class Controller implements serverproto {
 	private List<Userinfo> users;
 	private List<Lightinfo> lights;
 	private List<List<TSinfo> > measurements;
+	
 
 
 
@@ -59,6 +63,21 @@ public class Controller implements serverproto {
 	public int getPort(){
 		
 		return this.port;
+	}
+	
+	@Override
+	public void run() {
+		for(int i  = 0; i < clients.size();i++){
+			
+			try {
+				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),clients.get(i).getId()));
+			} catch(IOException e){
+				deleteClient(clients.get(i).getId());
+				i--;
+			}
+				
+		}
+		
 	}
 	
 	@Override
@@ -120,6 +139,7 @@ public class Controller implements serverproto {
 	@Override
 	public List<Lightinfo> sendLights (int id) throws AvroRemoteException 
 	{
+			
 		for(Userinfo temp : users){
 			
 			if(temp.getId() == id){
@@ -385,7 +405,9 @@ public class Controller implements serverproto {
 					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),temp.getId()));
 					fridgeproto proxy =  (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client);
 
-					return proxy.openFridge(id);
+					int i =  proxy.openFridge(id);
+					client.close();
+					return i;
 				}catch(IOException e){}
 			}
 		}
@@ -414,12 +436,65 @@ public class Controller implements serverproto {
 		return 0;
 		
 	}
+	
+	@Override
+	public int deleteClient(int id) {
+		
+		for(Clientinfo temp : clients){
+			
+			if (id == temp.getId()){
+				
+				if( temp.getType().toString().equals("User")) {
+					
+					for(Userinfo temp2 : users){
+						
+						if( id == temp2.getId()){
+							
+							users.remove(temp2);
+							break;
+						}
+					}
+				}
+				else if (temp.getType().toString().equals("Light")) {
+					
+					for(Lightinfo temp2 : lights){
+						
+						if( id == temp2.getId()){
+							
+							lights.remove(temp2);
+							break;
+						}
+					}
+				}
+				
+				else if (temp.getType().toString().equals("TS")) {
+					
+					for(List<TSinfo> temp2 : measurements){
+						
+						if( id == temp2.get(0).getId()){
+							
+							measurements.remove(temp2);
+							break;
+						}
+					}
+				}
+			}
+			
+			clients.remove(temp);
+			break;
+		}
+		
+		
+		return 0;
+	}
 
 
 	public static void main( String[] args){
 		
 		Server server = null;
 		Controller controller = new Controller();
+		
+
 
 		try {
 			server = new SaslSocketServer(new SpecificResponder(serverproto.class, controller), new InetSocketAddress(InetAddress.getLocalHost(),controller.getPort()));
@@ -431,10 +506,18 @@ public class Controller implements serverproto {
 		server.start();
 		
 
-		
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                controller.run();
+            }
+        }, 0, 1000);
 		
 		try {
 			server.join();
+
 		}	catch ( InterruptedException e) { }
 		
 		
