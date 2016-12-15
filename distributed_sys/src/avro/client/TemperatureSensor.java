@@ -85,7 +85,11 @@ public class TemperatureSensor  {
 						System.out.println(s.getMeasurement());
 					}catch(IOException e){}
 				}
+<<<<<<< HEAD
 				},0,10000);
+=======
+				},0,100000);
+>>>>>>> branch 'master' of https://github.com/michael5555/distributed-sys
 			
 			try {
 				server.join();
