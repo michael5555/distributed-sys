@@ -22,14 +22,14 @@ public class Fridge implements fridgeproto  {
 	
 	private List<CharSequence> items;
 	private int id;
-	private boolean open;
+	private int open;
 
 
 	public Fridge(int id) {
 		items = new ArrayList<CharSequence>();
 
 		this.id = id;
-		open = false;
+		open = 0;
 
 		
 	}
@@ -56,7 +56,10 @@ public class Fridge implements fridgeproto  {
 	public int openFridge(int id){
 		
 		if(id == this.id){
-			open = true;
+			open += 1;
+			if(open > 1){
+				return 1;
+			}
 			return 0;
 		}
 		
@@ -66,7 +69,7 @@ public class Fridge implements fridgeproto  {
 	@Override
 	public int addItem(int id, CharSequence item){
 		
-		if(id == this.id && open){
+		if((id == this.id) && (open != 0)){
 			items.add(item);
 			return 0;
 		}
@@ -76,7 +79,7 @@ public class Fridge implements fridgeproto  {
 	
 	@Override
 	public int removeItem(int id, CharSequence item){
-		if(id == this.id && open){
+		if(id == this.id && open != 0){
 
 			for(CharSequence temp : items){
 
@@ -104,8 +107,8 @@ public class Fridge implements fridgeproto  {
 	public int closeFridge(int id){
 		
 		if(id == this.id){
-			open = false;
-			return 0;
+			open -= 1;
+			return open;
 		}
 		
 		return -1;

@@ -215,10 +215,16 @@ public class User implements userproto {
 			try{
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
 				serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
-				if(proxy.openFridge(id) == 0){
+				int open = proxy.openFridge(id);
+				if(open == 0){
 					
 					System.out.println("Fridge with id: " + id + " has been opened.");
 					fridgeTime = true;
+				}
+				else if (open == 1){
+					System.out.println("Fridge with id: " + id + " is already opened.");
+					fridgeTime = true;
+
 				}
 				client.close();
 
@@ -280,9 +286,16 @@ public class User implements userproto {
 			try{
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),id));
 				fridgeproto proxy = (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client);
-				if(proxy.closeFridge(id) == 0){
+				int status = proxy.closeFridge(id);
+				if(status  == 0){
 					fridgeTime = false;
 					System.out.println("fridge with id: "  + id +  " has been closed");
+				}
+				else if (status > 0){
+					System.out.println("fridge with id: "  + id +  " is still in use");
+
+					fridgeTime = false;
+					
 				}
 				client.close();
 

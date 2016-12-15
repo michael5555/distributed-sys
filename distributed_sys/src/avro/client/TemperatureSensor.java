@@ -6,11 +6,15 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.Random;
 
+import org.apache.avro.ipc.SaslSocketServer;
 import org.apache.avro.ipc.SaslSocketTransceiver;
+import org.apache.avro.ipc.Server;
 import org.apache.avro.ipc.Transceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
+import org.apache.avro.ipc.specific.SpecificResponder;
 
 import avro.proto.serverproto;
+import avro.proto.userproto;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -55,11 +59,19 @@ public class TemperatureSensor  {
 
 
 	public static void main(String[] args) {
+		
+		Server server = null;
+
 		try {
 			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
 			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 			int id = proxy.connect("TS");
 			TemperatureSensor s = new TemperatureSensor(id);
+			
+			server = new SaslSocketServer(new SpecificResponder(userproto.class, s), new InetSocketAddress(InetAddress.getLocalHost(),s.getId()));
+			
+			server.start();
+
 			Timer timer = new Timer();
 			System.out.println(s.getMeasurement());
 			timer.schedule(new TimerTask(){
@@ -73,8 +85,11 @@ public class TemperatureSensor  {
 						System.out.println(s.getMeasurement());
 					}catch(IOException e){}
 				}
-				},0,1000);
+				},0,10000);
 			
+			try {
+				server.join();
+			}	catch ( InterruptedException e) { }
 
 
 		} catch(IOException e){
