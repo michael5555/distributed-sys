@@ -478,10 +478,9 @@ public class Controller extends Thread implements serverproto, Runnable  {
 						}
 					}
 				}
+				clients.remove(temp);
+				break;
 			}
-			
-			clients.remove(temp);
-			break;
 		}
 		
 		

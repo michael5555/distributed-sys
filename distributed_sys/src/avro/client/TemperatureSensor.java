@@ -73,7 +73,7 @@ public class TemperatureSensor  {
 						System.out.println(s.getMeasurement());
 					}catch(IOException e){}
 				}
-				},0,1000);
+				},0,100000);
 			
 
 
