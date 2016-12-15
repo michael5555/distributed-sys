@@ -18,6 +18,7 @@
 	  		{ "name" : "athome", "type" : "boolean" }
 	  		
 	  		
+	  		
 	  		 ] },
 	  		 
 	  	{ "name" : "Clientinfo", "type" : "record" , "fields" : [

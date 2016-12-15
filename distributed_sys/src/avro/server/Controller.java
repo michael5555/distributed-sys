@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 
-public class Controller extends Thread implements serverproto, Runnable  {
+public class Controller  implements serverproto {
 
 	private final int  port = 5000;
 	private int id;
@@ -65,12 +65,12 @@ public class Controller extends Thread implements serverproto, Runnable  {
 		return this.port;
 	}
 	
-	@Override
 	public void run() {
 		for(int i  = 0; i < clients.size();i++){
 			
 			try {
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),clients.get(i).getId()));
+				client.close();
 			} catch(IOException e){
 				deleteClient(clients.get(i).getId());
 				i--;
