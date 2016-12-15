@@ -480,12 +480,9 @@ public class Controller extends Thread implements serverproto, Runnable  {
 				}
 				clients.remove(temp);
 				break;
-<<<<<<< HEAD
 			}		
-=======
-			}
->>>>>>> branch 'master' of https://github.com/michael5555/distributed-sys
 		}
+
 		
 		
 		return 0;
