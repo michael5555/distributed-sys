@@ -5,6 +5,8 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.avro.ipc.SaslSocketServer;
 import org.apache.avro.ipc.SaslSocketTransceiver;
@@ -14,29 +16,48 @@ import org.apache.avro.ipc.specific.SpecificRequestor;
 import org.apache.avro.ipc.specific.SpecificResponder;
 
 import avro.proto.serverproto;
+import avro.proto.Userinfo;
+
 
 import avro.proto.fridgeproto;
-import avro.proto.lightproto;
 
 public class Fridge implements fridgeproto  {
 	
 	private List<CharSequence> items;
 	private int id;
-	private int open;
+	private boolean open;
+	
+	private Userinfo connected;
 
 
 	public Fridge(int id) {
 		items = new ArrayList<CharSequence>();
 
 		this.id = id;
-		open = 0;
-
+		open = false;
+		connected = new Userinfo(0,true);
 		
 	}
 	
 	public int getId(){
 		
 		return this.id;
+	}
+	
+	public void run() {
+		if ( connected.getId() != 0){
+			
+			try{
+				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),connected.getId()));
+				
+			}catch( IOException e){
+				
+				open = false;
+				connected.setId(0);
+				System.out.println("Connection to user lost");
+			}
+		}
+		
 	}
 	
 	public List<CharSequence> getItems(){
@@ -53,13 +74,18 @@ public class Fridge implements fridgeproto  {
 	}
 	
 	@Override
-	public int openFridge(int id){
+	public int openFridge(int id, int userid){
+		
+		if(open){
+			
+			return -2;
+		}
 		
 		if(id == this.id){
-			open += 1;
-			if(open > 1){
-				return 1;
-			}
+			open = true;
+			
+			connected.setId(userid);
+
 			return 0;
 		}
 		
@@ -69,7 +95,7 @@ public class Fridge implements fridgeproto  {
 	@Override
 	public int addItem(int id, CharSequence item){
 		
-		if((id == this.id) && (open != 0)){
+		if((id == this.id) && (open )){
 			items.add(item);
 			return 0;
 		}
@@ -79,7 +105,7 @@ public class Fridge implements fridgeproto  {
 	
 	@Override
 	public int removeItem(int id, CharSequence item){
-		if(id == this.id && open != 0){
+		if(id == this.id && open){
 
 			for(CharSequence temp : items){
 
@@ -107,8 +133,9 @@ public class Fridge implements fridgeproto  {
 	public int closeFridge(int id){
 		
 		if(id == this.id){
-			open -= 1;
-			return open;
+			open = false;
+			connected.setId(0);
+			return 0;
 		}
 		
 		return -1;
@@ -122,6 +149,17 @@ public class Fridge implements fridgeproto  {
 			int id = proxy.connect("Fridge");
 			Fridge kastje = new Fridge(id);
 			server = new SaslSocketServer(new SpecificResponder(fridgeproto.class, kastje), new InetSocketAddress(InetAddress.getLocalHost(),kastje.getId()));
+			
+			server.start();
+			
+	        Timer timer = new Timer();
+	        timer.schedule(new TimerTask() {
+
+	            @Override
+	            public void run() {
+	                kastje.run();
+	            }
+	        }, 0, 5000);
 
 
 		} catch(IOException e){
@@ -132,7 +170,7 @@ public class Fridge implements fridgeproto  {
 
 		}
 		
-		server.start();
+
 		
 		try {
 			server.join();

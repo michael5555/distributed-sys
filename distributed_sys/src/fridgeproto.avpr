@@ -11,7 +11,7 @@
 		      "response": {"type" : "array", "items" :  "string" } 
 	      	  }
 	      	  ,"openFridge" : {
-		      "request": [{"name" :  "id", "type" : "int"}],
+		      "request": [{"name" :  "id", "type" : "int"}, {"name" :  "user_id", "type" : "int"}],
 		      "response": {"name" : "success", "type" :  "int" } 
 	      	  }	      	  
 	      	  ,"addItem" : {

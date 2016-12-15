@@ -8,9 +8,9 @@ package avro.proto;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public interface fridgeproto {
-  public static final org.apache.avro.Protocol PROTOCOL = org.apache.avro.Protocol.parse("{\"protocol\":\"fridgeproto\",\"namespace\":\"avro.proto\",\"types\":[],\"messages\":{\"sendItems\":{\"request\":[{\"name\":\"id\",\"type\":\"int\"}],\"response\":{\"type\":\"array\",\"items\":\"string\"}},\"openFridge\":{\"request\":[{\"name\":\"id\",\"type\":\"int\"}],\"response\":\"int\"},\"addItem\":{\"request\":[{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"item\",\"type\":\"string\"}],\"response\":\"int\"},\"removeItem\":{\"request\":[{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"item\",\"type\":\"string\"}],\"response\":\"int\"},\"closeFridge\":{\"request\":[{\"name\":\"id\",\"type\":\"int\"}],\"response\":\"int\"}}}");
+  public static final org.apache.avro.Protocol PROTOCOL = org.apache.avro.Protocol.parse("{\"protocol\":\"fridgeproto\",\"namespace\":\"avro.proto\",\"types\":[],\"messages\":{\"sendItems\":{\"request\":[{\"name\":\"id\",\"type\":\"int\"}],\"response\":{\"type\":\"array\",\"items\":\"string\"}},\"openFridge\":{\"request\":[{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"user_id\",\"type\":\"int\"}],\"response\":\"int\"},\"addItem\":{\"request\":[{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"item\",\"type\":\"string\"}],\"response\":\"int\"},\"removeItem\":{\"request\":[{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"item\",\"type\":\"string\"}],\"response\":\"int\"},\"closeFridge\":{\"request\":[{\"name\":\"id\",\"type\":\"int\"}],\"response\":\"int\"}}}");
   java.util.List<java.lang.CharSequence> sendItems(int id) throws org.apache.avro.AvroRemoteException;
-  int openFridge(int id) throws org.apache.avro.AvroRemoteException;
+  int openFridge(int id, int user_id) throws org.apache.avro.AvroRemoteException;
   int addItem(int id, java.lang.CharSequence item) throws org.apache.avro.AvroRemoteException;
   int removeItem(int id, java.lang.CharSequence item) throws org.apache.avro.AvroRemoteException;
   int closeFridge(int id) throws org.apache.avro.AvroRemoteException;
@@ -19,7 +19,7 @@ public interface fridgeproto {
   public interface Callback extends fridgeproto {
     public static final org.apache.avro.Protocol PROTOCOL = avro.proto.fridgeproto.PROTOCOL;
     void sendItems(int id, org.apache.avro.ipc.Callback<java.util.List<java.lang.CharSequence>> callback) throws java.io.IOException;
-    void openFridge(int id, org.apache.avro.ipc.Callback<java.lang.Integer> callback) throws java.io.IOException;
+    void openFridge(int id, int user_id, org.apache.avro.ipc.Callback<java.lang.Integer> callback) throws java.io.IOException;
     void addItem(int id, java.lang.CharSequence item, org.apache.avro.ipc.Callback<java.lang.Integer> callback) throws java.io.IOException;
     void removeItem(int id, java.lang.CharSequence item, org.apache.avro.ipc.Callback<java.lang.Integer> callback) throws java.io.IOException;
     void closeFridge(int id, org.apache.avro.ipc.Callback<java.lang.Integer> callback) throws java.io.IOException;

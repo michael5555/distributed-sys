@@ -21,6 +21,8 @@ import avro.proto.userproto;
 
 import avro.proto.Lightinfo;
 import avro.proto.Clientinfo;
+import avro.proto.Fridgeinfo;
+
 
 import avro.proto.lightproto;
 
@@ -28,6 +30,8 @@ import avro.proto.fridgeproto;
 
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import asg.cliche.*;
 
@@ -37,15 +41,34 @@ public class User implements userproto {
 	
 	private int id;
 	private boolean fridgeTime;
+	
+	private Fridgeinfo fridge;
 
 	
 	User(int id, String username){
 		this.id = id;
 		fridgeTime = false;
+		fridge = new Fridgeinfo(0);
 	}
 	public int getId(){
 		
 		return this.id;
+	}
+	
+	public void run() {
+		if ( fridge.getId() != 0){
+			
+			try{
+				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),fridge.getId()));
+				
+			}catch( IOException e){
+				
+				fridgeTime = false;
+				fridge.setId(0);
+				System.out.println("Connection to fridge lost");
+			}
+		}
+		
 	}
 	
 	@Override
@@ -215,17 +238,20 @@ public class User implements userproto {
 			try{
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
 				serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
-				int open = proxy.openFridge(id);
+				int open = proxy.openFridge(id,this.id);
 				if(open == 0){
 					
 					System.out.println("Fridge with id: " + id + " has been opened.");
 					fridgeTime = true;
+					fridge.setId(id);
 				}
-				else if (open == 1){
-					System.out.println("Fridge with id: " + id + " is already opened.");
-					fridgeTime = true;
+				
+				else if(open == -2){
+					
+					System.out.println("Fridge with id: " + id + " is already being used.");
 
 				}
+
 				client.close();
 
 			}catch(IOException e){}
@@ -290,6 +316,8 @@ public class User implements userproto {
 				if(status  == 0){
 					fridgeTime = false;
 					System.out.println("fridge with id: "  + id +  " has been closed");
+					fridge.setId(0);
+
 				}
 				else if (status > 0){
 					System.out.println("fridge with id: "  + id +  " is still in use");
@@ -324,6 +352,14 @@ public class User implements userproto {
 			server = new SaslSocketServer(new SpecificResponder(userproto.class, Bob), new InetSocketAddress(InetAddress.getLocalHost(),Bob.getId()));
 			
 			server.start();
+	        Timer timer = new Timer();
+	        timer.schedule(new TimerTask() {
+
+	            @Override
+	            public void run() {
+	                Bob.run();
+	            }
+	        }, 0, 5000);
 			ShellFactory.createConsoleShell("user", "", Bob).commandLoop(); // and three.
 
 		} catch(IOException e){

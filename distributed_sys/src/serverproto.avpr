@@ -34,6 +34,12 @@
 	  		{ "name" : "measurement", "type" : "double" }
 	  		
 	  		
+	  		 ] },
+	  	{ "name" : "Fridgeinfo", "type" : "record" , "fields" : [
+	  
+	  		{ "name" : "id",  "type" : "int" }
+	  		
+	  		
 	  		 ] }
   	
   	
@@ -82,7 +88,7 @@
 	      	  
 	      	  }	      	 
 	      	  ,"openFridge" : {
-	      	  "request": [{"name" :  "id", "type" : "int"}],
+	      	  "request": [{"name" :  "id", "type" : "int"}, {"name" :  "userid", "type" : "int"}],
 		      "response": {"name" : "success", "type" :  "int" }
 	      	  
 	      	  }

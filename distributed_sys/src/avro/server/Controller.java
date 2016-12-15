@@ -70,7 +70,6 @@ public class Controller  implements serverproto {
 			
 			try {
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),clients.get(i).getId()));
-				client.close();
 			} catch(IOException e){
 				deleteClient(clients.get(i).getId());
 				i--;
@@ -396,7 +395,7 @@ public class Controller  implements serverproto {
 	}
 	
 	@Override
-	public int openFridge(int id){
+	public int openFridge(int id, int userid){
 
 		for(Clientinfo temp : clients){
 
@@ -405,7 +404,7 @@ public class Controller  implements serverproto {
 					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),temp.getId()));
 					fridgeproto proxy =  (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client);
 
-					int i =  proxy.openFridge(id);
+					int i =  proxy.openFridge(id,userid);
 					client.close();
 					return i;
 				}catch(IOException e){}
@@ -513,7 +512,7 @@ public class Controller  implements serverproto {
             public void run() {
                 controller.run();
             }
-        }, 0, 1000);
+        }, 0, 5000);
 		
 		try {
 			server.join();
