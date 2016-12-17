@@ -37,14 +37,14 @@ import avro.proto.TSinfo;
 import java.util.List;
 import java.util.ArrayList;
 
-public class Controller  implements serverproto {
+public class Controller implements serverproto {
 
-	private final int  port = 5000;
+	private final int port = 5000;
 	private int id;
-	private List<Clientinfo> clients;
-	private List<Userinfo> users;
-	private List<Lightinfo> lights;
-	private List<List<TSinfo> > measurements;
+	protected List<Clientinfo> clients;
+	protected List<Userinfo> users;
+	protected List<Lightinfo> lights;
+	protected List<List<TSinfo> > measurements;
 	
 	public Controller(){
 		this.id = 1;
@@ -58,10 +58,19 @@ public class Controller  implements serverproto {
 		return this.port;
 	}
 	
-	public void run() {
+	public synchronized void run() {
 		for(int i  = 0; i < clients.size();i++){
 			try {
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),clients.get(i).getId()));
+				if( clients.get(i).getType().toString().equals("User") || clients.get(i).getType().toString().equals("Fridge")) {
+					
+					serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
+					proxy.syncClients(this.clients);
+					proxy.syncLights(this.lights);
+					proxy.syncMeasurements(this.measurements);
+					proxy.syncUsers(this.users);
+
+				}
 			} catch(IOException e){
 				deleteClient(clients.get(i).getId());
 				i--;
@@ -70,7 +79,7 @@ public class Controller  implements serverproto {
 	}
 	
 	@Override
-	public int connect(CharSequence type2) throws AvroRemoteException
+	public synchronized int connect(CharSequence type2) throws AvroRemoteException
 	{
 		if(type2.toString().equals("User")){
 			users.add( new Userinfo(port + id,true) );
@@ -89,23 +98,6 @@ public class Controller  implements serverproto {
 	}
 	
 	@Override
-	public int getLights (int id, boolean status) throws AvroRemoteException 
-	{
-		for(Lightinfo temp : lights){
-			if(temp.getId() == id){
-				if(temp.getStatus() != status){
-					temp.setStatus(status);
-					return 0;
-				}
-				return 0;
-			}
-		}
-		lights.add(new Lightinfo(id, status));
-		System.out.println(" Light connected: " + id + " (status: " + status + " )");
-		return 0;
-	}
-
-	@Override
 	public List<Lightinfo> sendLights (int id) throws AvroRemoteException 
 	{
 		for(Userinfo temp : users){
@@ -113,7 +105,7 @@ public class Controller  implements serverproto {
 				return lights;
 			}
 		}
-			return new ArrayList<Lightinfo>();
+		return new ArrayList<Lightinfo>();
 	}
 	
 	@Override
@@ -124,11 +116,11 @@ public class Controller  implements serverproto {
 				return clients;
 			}
 		}
-			return new ArrayList<Clientinfo>();
+		return new ArrayList<Clientinfo>();
 	}
 	
 	@Override
-	public int changeLightStatus(int id){
+	public synchronized int changeLightStatus(int id){
 		for(Lightinfo temp : lights){
 			if( id == temp.getId()){
 				try {
@@ -157,7 +149,7 @@ public class Controller  implements serverproto {
 	}
 
 	@Override
-	public int changeHomeStatus(int id){
+	public synchronized int changeHomeStatus(int id){
 		boolean homestatus = false;
 		for(Userinfo temp: users){
 			if(id == temp.getId()){
@@ -232,7 +224,7 @@ public class Controller  implements serverproto {
 	}
 	
 	@Override
-	public int sendTSMeasurement(double measurement, int id){	
+	public synchronized int sendTSMeasurement(double measurement, int id){	
 		for(List<TSinfo> temp : measurements){
 			if( temp.get(0).getId() == id){
 				if(temp.size() == 1 && temp.get(0).getMeasurement() == 0.0){
@@ -289,7 +281,7 @@ public class Controller  implements serverproto {
 	}
 	
 	@Override
-	public int openFridge(int id, int userid){
+	public int openAFridge(int id, int userid){
 		for(Clientinfo temp : clients){
 			if(id == temp.getId() && temp.getType().toString().equals("Fridge")){
 				try{
@@ -323,7 +315,7 @@ public class Controller  implements serverproto {
 	}
 	
 	@Override
-	public int deleteClient(int id) {
+	public synchronized int deleteClient(int id) {
 		for(Clientinfo temp : clients){
 			if (id == temp.getId()){
 				if( temp.getType().toString().equals("User")) {
@@ -354,6 +346,34 @@ public class Controller  implements serverproto {
 				break;
 			}		
 		}
+		return 0;
+	}
+
+	@Override
+	public synchronized int syncClients(List<Clientinfo> clients) {
+		
+		this.clients = clients;
+		return 0;
+	}
+	
+	@Override
+	public synchronized int syncUsers(List<Userinfo> users) {
+		
+		this.users = users;
+		return 0;
+	}
+	
+	@Override
+	public synchronized int syncLights(List<Lightinfo> lights) {
+		
+		this.lights = lights;
+		return 0;
+	}
+	
+	@Override
+	public synchronized int syncMeasurements(List<List<TSinfo>> measurements) {
+		
+		this.measurements = measurements;
 		return 0;
 	}
 

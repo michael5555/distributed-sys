@@ -16,12 +16,16 @@ import org.apache.avro.ipc.specific.SpecificRequestor;
 import org.apache.avro.ipc.specific.SpecificResponder;
 
 import avro.proto.serverproto;
+import avro.proto.Clientinfo;
+import avro.proto.Lightinfo;
+import avro.proto.TSinfo;
 import avro.proto.Userinfo;
-
-
 import avro.proto.fridgeproto;
 
-public class Fridge implements fridgeproto  {
+import avro.server.Controller;
+
+
+public class Fridge extends Controller implements fridgeproto  {
 	
 	private List<CharSequence> items;
 	private int id;
@@ -111,6 +115,7 @@ public class Fridge implements fridgeproto  {
 		}
 		return -1;
 	}
+	
 
 	public static void main(String[] args) {
 		Server server = null;

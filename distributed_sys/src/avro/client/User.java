@@ -28,6 +28,9 @@ import avro.proto.lightproto;
 
 import avro.proto.fridgeproto;
 
+import avro.server.Controller;
+
+
 
 import java.util.List;
 import java.util.Timer;
@@ -35,7 +38,7 @@ import java.util.TimerTask;
 
 import asg.cliche.*;
 
-public class User implements userproto {
+public class User extends Controller implements userproto {
 	
 	private int id;
 	private boolean fridgeTime;
@@ -121,7 +124,7 @@ public class User implements userproto {
 	}
 	
 	@Command
-	public void changeLightStatus(int id){
+	public void changeLight(int id){
 		if(!fridgeTime){
 			try{
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
@@ -222,7 +225,7 @@ public class User implements userproto {
 			try{
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
 				serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
-				int open = proxy.openFridge(id,this.id);
+				int open = proxy.openAFridge(id,this.id);
 				if(open == 0){
 					System.out.println("Fridge with id: " + id + " has been opened.");
 					fridgeTime = true;
@@ -305,6 +308,12 @@ public class User implements userproto {
 		else{
 			System.out.println("Right now you are connected to a controller");
 		}
+	}
+	
+	@Command
+	public void printbackup(){
+		
+		System.out.println(clients.size());
 	}
 
 

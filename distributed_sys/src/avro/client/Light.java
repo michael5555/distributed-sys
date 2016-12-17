@@ -28,14 +28,6 @@ public class Light implements lightproto  {
 		return this.id;
 	}
 	
-	public void changeState(serverproto proxy){
-		state = !state;
-		try{
-			proxy.getLights(this.id, this.state);
-		}catch(IOException e){}
-		System.out.println(" you changed your state to: " + state);
-	}
-	
 	public Boolean getState() {
 		return state;
 	}

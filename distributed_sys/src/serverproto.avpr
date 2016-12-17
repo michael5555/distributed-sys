@@ -41,6 +41,8 @@
 	  		
 	  		
 	  		 ] }
+	  		 
+
   	
   	
   	],
@@ -50,10 +52,7 @@
 		      "request": [{"name" :  "type2", "type" : "string"}],
 		      "response": "int"
 		      }
-		  	 ,"getLights": {
-		      "request": [{"name" :  "id", "type" : "int"}, {"name" : "status" , "type" : "boolean"}],
-		      "response": "int"
-		      }
+
 		     ,"sendLights": {
 		      "request": [{"name" : "id",  "type" :  "int" }],
 		      "response": {"type" : "array", "items" :  "Lightinfo" } 
@@ -87,7 +86,7 @@
 		      "response": {"type" : "array", "items" :  "double" }
 	      	  
 	      	  }	      	 
-	      	  ,"openFridge" : {
+	      	  ,"openAFridge" : {
 	      	  "request": [{"name" :  "id", "type" : "int"}, {"name" :  "userid", "type" : "int"}],
 		      "response": {"name" : "success", "type" :  "int" }
 	      	  
@@ -102,6 +101,27 @@
 		      "response": {"name" : "success", "type" :  "int" }
 	      	  
 	      	  }
+	      	  ,"syncClients" : {
+	      	  "request": [{"name" :  "clients", "type" : {"type" : "array", "items" :  "Clientinfo" }}],
+		      "response": {"name" : "success", "type" :  "int" }
+	      	  
+	      	  }
+	      	  ,"syncUsers" : {
+	      	  "request": [{"name" :  "users", "type" : {"type" : "array", "items" :  "Userinfo" }}],
+		      "response": {"name" : "success", "type" :  "int" }
+	      	  
+	      	  }
+	      	  ,"syncLights" : {
+	      	  "request": [{"name" :  "lights", "type" : {"type" : "array", "items" :  "Lightinfo" }}],
+		      "response": {"name" : "success", "type" :  "int" }
+	      	  
+	      	  }
+	      	  ,"syncMeasurements" : {
+	      	  "request": [{"name" :  "measurements", "type" : {"type" : "array", "items" :  {"type" : "array", "items" :  "TSinfo" } }}],
+		      "response": {"name" : "success", "type" :  "int" }
+	      	  
+	      	  }
+	      	  	
 	      	  	
  	 }
  }
