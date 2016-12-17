@@ -35,59 +35,47 @@ import java.util.TimerTask;
 
 import asg.cliche.*;
 
-
-
 public class User implements userproto {
 	
 	private int id;
 	private boolean fridgeTime;
-	
 	private Fridgeinfo fridge;
 
-	
 	User(int id, String username){
 		this.id = id;
 		fridgeTime = false;
 		fridge = new Fridgeinfo(0);
 	}
+	
 	public int getId(){
-		
 		return this.id;
 	}
 	
 	public void run() {
 		if ( fridge.getId() != 0){
-			
 			try{
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),fridge.getId()));
-				
 			}catch( IOException e){
-				
 				fridgeTime = false;
 				fridge.setId(0);
 				System.out.println("Connection to fridge lost");
 			}
 		}
-		
 	}
 	
 	@Override
 	public int reportUserStatus(int id, boolean athome){
-		
 		if(athome){
-		
 			System.out.println("User with id: " + id + " has  entered the house.");
 		}
 		else{
 			System.out.println("User with id: " + id + " has  left the house.");
-
 		}
 		return 0;
 	}
 	
 	@Override
 	public int reportFridgeEmpty(int id) {
-		
 		System.out.println("Fridge with id: " + id + " is empty");
 		return 0;
 	}
@@ -105,7 +93,6 @@ public class User implements userproto {
 					System.out.println("There are no lights");
 				}
 				for(Lightinfo temp : lights){
-					
 					System.out.println("We have a light with id: " + temp.getId() + " ,its status is currently: " +  temp.getStatus());
 				}
 			}catch(IOException e){}
@@ -124,7 +111,6 @@ public class User implements userproto {
 				List<Clientinfo> clients = proxy.sendClients(this.id);
 				client.close();
 				for(Clientinfo temp : clients){
-
 					System.out.println("We have a client with id: " + temp.getId() + " ,its type is: " +  temp.getType());
 				}
 			}catch(IOException e){}
@@ -133,6 +119,7 @@ public class User implements userproto {
 			System.out.println("Right now you are connected to a Fridge");
 		}
 	}
+	
 	@Command
 	public void changeLightStatus(int id){
 		if(!fridgeTime){
@@ -149,7 +136,6 @@ public class User implements userproto {
 		}
 	}
 	
-
 	@Command
 	public void changeHomeStatus(){
 		if(!fridgeTime){
@@ -180,7 +166,6 @@ public class User implements userproto {
 				if (items.size() == 0){
 					System.out.println("Fridge with id: " + id + " is empty");
 				}
-				
 				for(CharSequence temp : items){
 					System.out.println("Fridge has : " + temp);
 				}
@@ -224,7 +209,6 @@ public class User implements userproto {
 				for(Double temp : temps){
 					System.out.print( temp + ", ");
 				}
-		
 			}catch(IOException e){}
 		}
 		else{
@@ -240,20 +224,14 @@ public class User implements userproto {
 				serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 				int open = proxy.openFridge(id,this.id);
 				if(open == 0){
-					
 					System.out.println("Fridge with id: " + id + " has been opened.");
 					fridgeTime = true;
 					fridge.setId(id);
 				}
-				
 				else if(open == -2){
-					
 					System.out.println("Fridge with id: " + id + " is already being used.");
-
 				}
-
 				client.close();
-
 			}catch(IOException e){}
 		}
 		else{
@@ -263,51 +241,44 @@ public class User implements userproto {
 	
 	@Command
 	public void addItemtoFridge(int id,CharSequence item){
-		
 		if(fridgeTime){
 			try{
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),id));
 				fridgeproto proxy = (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client);
 				if(proxy.addItem(id, item) == 0){
 					System.out.println("Added item: " + item + " to fridge with id: "  + id);
-
 				}
 				client.close();
-
-
-			}catch (IOException e){}
-			
+			}catch (IOException e){
+				
+			}
 		}
 		else{
 			System.out.println("Right now you are connected to a controller");
-
 		}
 	}
+	
 	@Command
 	public void removeItemfromFridge(int id,CharSequence item){
-		
 		if(fridgeTime){
 			try{
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),id));
 				fridgeproto proxy = (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client);
 				if(proxy.removeItem(id, item) == 0){
 					System.out.println("removed item: " + item + " from fridge with id: "  + id);
-
 				}
 				client.close();
-
-			}catch (IOException e){}
-			
+			}catch (IOException e){
+				
+			}
 		}
 		else{
 			System.out.println("Right now you are connected to a controller");
-
 		}
 	}
 	
 	@Command
 	public void closeFridge(int id){
-		
 		if(fridgeTime){
 			try{
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),id));
@@ -317,23 +288,18 @@ public class User implements userproto {
 					fridgeTime = false;
 					System.out.println("fridge with id: "  + id +  " has been closed");
 					fridge.setId(0);
-
 				}
 				else if (status > 0){
 					System.out.println("fridge with id: "  + id +  " is still in use");
-
 					fridgeTime = false;
-					
 				}
 				client.close();
-
-
-			}catch (IOException e){}
-			
+			}catch (IOException e){
+				
+			}
 		}
 		else{
 			System.out.println("Right now you are connected to a controller");
-
 		}
 	}
 
@@ -341,43 +307,34 @@ public class User implements userproto {
 	public static void main(String[] args) {
 		Server server = null;
 		try {
-
 			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
 			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
+			
 			int id = proxy.connect("User");
 			User Bob = new User(id,"Bobby");
 
 			client.close();
 
 			server = new SaslSocketServer(new SpecificResponder(userproto.class, Bob), new InetSocketAddress(InetAddress.getLocalHost(),Bob.getId()));
-			
 			server.start();
+			
 	        Timer timer = new Timer();
 	        timer.schedule(new TimerTask() {
-
 	            @Override
 	            public void run() {
 	                Bob.run();
 	            }
 	        }, 0, 5000);
 			ShellFactory.createConsoleShell("user", "", Bob).commandLoop(); // and three.
-
 		} catch(IOException e){
-			
 			System.err.println("Error connecting to server ...");
 			e.printStackTrace(System.err);
 			System.exit(1);
-
 		}
-		
-
-		
 		try {
 			server.join();
-		}	catch ( InterruptedException e) { }
-
-
-
+		}	catch ( InterruptedException e) { 
+			
+		}
 	}
-
 }
