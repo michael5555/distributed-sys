@@ -264,8 +264,12 @@ public class User implements userproto {
 			try{
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),id));
 				fridgeproto proxy = (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client);
-				if(proxy.removeItem(id, item) == 0){
+				int removed = proxy.removeItem(id, item);
+				if(removed == 0){
 					System.out.println("removed item: " + item + " from fridge with id: "  + id);
+				}
+				else {
+					System.out.println("The item " + item + " was not in the fridge");
 				}
 				client.close();
 			}catch (IOException e){
@@ -326,6 +330,7 @@ public class User implements userproto {
 	            }
 	        }, 0, 5000);
 			ShellFactory.createConsoleShell("user", "", Bob).commandLoop(); // and three.
+			System.exit(1);
 		} catch(IOException e){
 			System.err.println("Error connecting to server ...");
 			e.printStackTrace(System.err);

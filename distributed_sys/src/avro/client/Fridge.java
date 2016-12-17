@@ -98,7 +98,6 @@ public class Fridge implements fridgeproto  {
 					return 0;
 				}
 			}
-			System.out.println("The item " + item + " is not in the fridge.");
 		}
 		return -1;
 	}
