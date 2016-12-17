@@ -3,6 +3,50 @@
   "protocol": "userproto",
   
   
+      "types" : [
+	  	{ "name" : "Lightinfo", "type" : "record" , "fields" : [
+	  
+	  		{ "name" : "id",  "type" : "int" },
+	  		{ "name" : "status", "type" : "boolean" }
+	  		
+	  		
+	  		 ] },
+	  		 
+	    { "name" : "Userinfo", "type" : "record" , "fields" : [
+	  
+	  		{ "name" : "id",  "type" : "int" },
+	  		{ "name" : "athome", "type" : "boolean" }
+	  		
+	  		
+	  		
+	  		 ] },
+	  		 
+	  	{ "name" : "Clientinfo", "type" : "record" , "fields" : [
+	  
+	  		{ "name" : "id",  "type" : "int" },
+	  		{ "name" : "type", "type" : "string" }
+	  		
+	  		
+	  		 ] },
+	  	{ "name" : "TSinfo", "type" : "record" , "fields" : [
+	  
+	  		{ "name" : "id",  "type" : "int" },
+	  		{ "name" : "measurement", "type" : "double" }
+	  		
+	  		
+	  		 ] },
+	  	{ "name" : "Fridgeinfo", "type" : "record" , "fields" : [
+	  
+	  		{ "name" : "id",  "type" : "int" }
+	  		
+	  		
+	  		 ] }
+	  		 
+
+  	
+  	
+  	],
+  
 
 	  "messages":
 	  {
@@ -13,6 +57,26 @@
 	      	  ,"reportFridgeEmpty" : {
 		      "request": [{"name" :  "id", "type" : "int"}],
 		      "response": "int"
+	      	  }
+	      	  ,"syncClients" : {
+	      	  "request": [{"name" :  "clients", "type" : {"type" : "array", "items" :  "Clientinfo" }}],
+		      "response": {"name" : "success", "type" :  "int" }
+	      	  
+	      	  }
+	      	  ,"syncUsers" : {
+	      	  "request": [{"name" :  "users", "type" : {"type" : "array", "items" :  "Userinfo" }}],
+		      "response": {"name" : "success", "type" :  "int" }
+	      	  
+	      	  }
+	      	  ,"syncLights" : {
+	      	  "request": [{"name" :  "lights", "type" : {"type" : "array", "items" :  "Lightinfo" }}],
+		      "response": {"name" : "success", "type" :  "int" }
+	      	  
+	      	  }
+	      	  ,"syncMeasurements" : {
+	      	  "request": [{"name" :  "measurements", "type" : {"type" : "array", "items" :  {"type" : "array", "items" :  "TSinfo" } }}],
+		      "response": {"name" : "success", "type" :  "int" }
+	      	  
 	      	  }
 	      	  
  	 }

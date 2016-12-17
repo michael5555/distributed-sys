@@ -20,6 +20,8 @@ import avro.proto.userproto;
 
 
 import avro.proto.Lightinfo;
+import avro.proto.TSinfo;
+import avro.proto.Userinfo;
 import avro.proto.Clientinfo;
 import avro.proto.Fridgeinfo;
 
@@ -82,6 +84,35 @@ public class User extends Controller implements userproto {
 		System.out.println("Fridge with id: " + id + " is empty");
 		return 0;
 	}
+	
+	@Override
+	public synchronized int syncClients(List<Clientinfo> clients) {
+		
+		this.clients = clients;
+		return 0;
+	}
+	
+	@Override
+	public synchronized int syncUsers(List<Userinfo> users) {
+		
+		this.users = users;
+		return 0;
+	}
+	
+	@Override
+	public synchronized int syncLights(List<Lightinfo> lights) {
+		
+		this.lights = lights;
+		return 0;
+	}
+	
+	@Override
+	public synchronized int syncMeasurements(List<List<TSinfo>> measurements) {
+		
+		this.measurements = measurements;
+		return 0;
+	}
+
 	
 	@Command
 	public void printLights(){

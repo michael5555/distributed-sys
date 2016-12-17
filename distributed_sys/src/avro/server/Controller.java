@@ -62,9 +62,17 @@ public class Controller implements serverproto {
 		for(int i  = 0; i < clients.size();i++){
 			try {
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),clients.get(i).getId()));
-				if( clients.get(i).getType().toString().equals("User") || clients.get(i).getType().toString().equals("Fridge")) {
+				if( clients.get(i).getType().toString().equals("User") ) {
 					
-					serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
+					userproto proxy =  (userproto) SpecificRequestor.getClient(userproto.class, client);
+					proxy.syncClients(this.clients);
+					proxy.syncLights(this.lights);
+					proxy.syncMeasurements(this.measurements);
+					proxy.syncUsers(this.users);
+
+				}
+				else if (clients.get(i).getType().toString().equals("Fridge")){
+					fridgeproto proxy =  (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client);
 					proxy.syncClients(this.clients);
 					proxy.syncLights(this.lights);
 					proxy.syncMeasurements(this.measurements);
@@ -349,33 +357,7 @@ public class Controller implements serverproto {
 		return 0;
 	}
 
-	@Override
-	public synchronized int syncClients(List<Clientinfo> clients) {
-		
-		this.clients = clients;
-		return 0;
-	}
-	
-	@Override
-	public synchronized int syncUsers(List<Userinfo> users) {
-		
-		this.users = users;
-		return 0;
-	}
-	
-	@Override
-	public synchronized int syncLights(List<Lightinfo> lights) {
-		
-		this.lights = lights;
-		return 0;
-	}
-	
-	@Override
-	public synchronized int syncMeasurements(List<List<TSinfo>> measurements) {
-		
-		this.measurements = measurements;
-		return 0;
-	}
+
 
 	public static void main( String[] args){
 		Server server = null;

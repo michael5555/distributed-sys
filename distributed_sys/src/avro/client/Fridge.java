@@ -116,6 +116,33 @@ public class Fridge extends Controller implements fridgeproto  {
 		return -1;
 	}
 	
+	@Override
+	public synchronized int syncClients(List<Clientinfo> clients) {
+		
+		this.clients = clients;
+		return 0;
+	}
+	
+	@Override
+	public synchronized int syncUsers(List<Userinfo> users) {
+		
+		this.users = users;
+		return 0;
+	}
+	
+	@Override
+	public synchronized int syncLights(List<Lightinfo> lights) {
+		
+		this.lights = lights;
+		return 0;
+	}
+	
+	@Override
+	public synchronized int syncMeasurements(List<List<TSinfo>> measurements) {
+		
+		this.measurements = measurements;
+		return 0;
+	}
 
 	public static void main(String[] args) {
 		Server server = null;
