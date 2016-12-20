@@ -31,22 +31,30 @@ public class Fridge extends Controller implements fridgeproto  {
 	private int id;
 	private boolean open;
 	private Userinfo connected;
+	private String address;
 
-	public Fridge(int id) {
+
+	public Fridge(int id, String conaddr, String addr) {
+		super(conaddr);
+		this.address = addr;
 		items = new ArrayList<CharSequence>();
 		this.id = id;
 		open = false;
-		connected = new Userinfo(0,true);
+		connected = new Userinfo(0,true,"");
 	}
 	
 	public int getId(){
 		return this.id;
 	}
 	
+	public String getAddress(){
+		return this.address;
+	}
+	
 	public void run() {
 		if ( connected.getId() != 0){
 			try{
-				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),connected.getId()));
+				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(connected.getAddress().toString()),connected.getId()));
 			}catch( IOException e){
 				open = false;
 				System.out.println("Connection to user with id " + connected.getId() + " lost");
@@ -65,13 +73,14 @@ public class Fridge extends Controller implements fridgeproto  {
 	}
 	
 	@Override
-	public int openFridge(int id, int userid){
+	public int openFridge(int id, int userid,CharSequence useraddr){
 		if(open){	
 			return -2;
 		}
 		if(id == this.id){
 			open = true;
 			connected.setId(userid);
+			connected.setAddress(useraddr);
 			return 0;
 		}
 		return -1;
@@ -94,7 +103,7 @@ public class Fridge extends Controller implements fridgeproto  {
 					items.remove(item);
 					if(items.size() == 0){
 						try{
-							Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
+							Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(this.getControllerAddress()),5000));
 							serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 							proxy.FridgeEmptyMessage(this.id);
 						}catch(IOException e){}
@@ -111,6 +120,8 @@ public class Fridge extends Controller implements fridgeproto  {
 		if(id == this.id){
 			open = false;
 			connected.setId(0);
+			connected.setAddress("");
+
 			return 0;
 		}
 		return -1;
@@ -147,13 +158,13 @@ public class Fridge extends Controller implements fridgeproto  {
 	public static void main(String[] args) {
 		Server server = null;
 		try {
-			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
+			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(args[0]),5000));
 			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 			
-			int id = proxy.connect("Fridge");
-			Fridge kastje = new Fridge(id);
+			int id = proxy.connect("Fridge",args[1]);
+			Fridge kastje = new Fridge(id,args[0],args[1]);
 			
-			server = new SaslSocketServer(new SpecificResponder(fridgeproto.class, kastje), new InetSocketAddress(InetAddress.getLocalHost(),kastje.getId()));
+			server = new SaslSocketServer(new SpecificResponder(fridgeproto.class, kastje), new InetSocketAddress(InetAddress.getByName(kastje.getAddress()),kastje.getId()));
 			server.start();
 			
 	        Timer timer = new Timer();

@@ -18,10 +18,24 @@ public class Light implements lightproto  {
 	
 	private Boolean state;
 	private int id;
+	private String conaddress;
+	private String address;
 
-	public Light(int id) {
+
+
+	public Light(int id,String conaddr, String addr) {
+		this.conaddress = conaddr;
+		this.address = addr;
 		state = false;
 		this.id = id;
+	}
+	
+	public String getControllerAddress() {
+		return conaddress;
+	}
+	
+	public String getAddress() {
+		return address;
 	}
 	
 	public int getId(){
@@ -49,14 +63,14 @@ public class Light implements lightproto  {
 	public static void main(String[] args) {
 		Server server = null;
 		try {
-			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
+			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(args[0]),5000));
 			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 			
-			int id = proxy.connect("Light");
+			int id = proxy.connect("Light",args[1]);
 			client.close();
-			Light lampje = new Light(id);
+			Light lampje = new Light(id,args[0],args[1]);
 			
-			server = new SaslSocketServer(new SpecificResponder(lightproto.class, lampje), new InetSocketAddress(InetAddress.getLocalHost(),lampje.getId()));
+			server = new SaslSocketServer(new SpecificResponder(lightproto.class, lampje), new InetSocketAddress(InetAddress.getByName(lampje.getAddress()),lampje.getId()));
 			server.start();
 		} catch(IOException e){
 			System.err.println("Error connecting to server ...");

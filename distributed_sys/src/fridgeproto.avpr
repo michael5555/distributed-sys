@@ -2,11 +2,13 @@
   "namespace": "avro.proto",
   "protocol": "fridgeproto",
   
-     "types" : [
+    "types" : [
 	  	{ "name" : "Lightinfo", "type" : "record" , "fields" : [
 	  
 	  		{ "name" : "id",  "type" : "int" },
-	  		{ "name" : "status", "type" : "boolean" }
+	  		{ "name" : "status", "type" : "boolean" },
+	  		{ "name" : "address", "type" : "string" }
+	  		
 	  		
 	  		
 	  		 ] },
@@ -14,7 +16,9 @@
 	    { "name" : "Userinfo", "type" : "record" , "fields" : [
 	  
 	  		{ "name" : "id",  "type" : "int" },
-	  		{ "name" : "athome", "type" : "boolean" }
+	  		{ "name" : "athome", "type" : "boolean" },
+	  		{ "name" : "address", "type" : "string" }
+	  		
 	  		
 	  		
 	  		
@@ -23,20 +27,26 @@
 	  	{ "name" : "Clientinfo", "type" : "record" , "fields" : [
 	  
 	  		{ "name" : "id",  "type" : "int" },
-	  		{ "name" : "type", "type" : "string" }
+	  		{ "name" : "type", "type" : "string" },
+	  		{ "name" : "address", "type" : "string" }
+	  		
 	  		
 	  		
 	  		 ] },
 	  	{ "name" : "TSinfo", "type" : "record" , "fields" : [
 	  
 	  		{ "name" : "id",  "type" : "int" },
-	  		{ "name" : "measurement", "type" : "double" }
+	  		{ "name" : "measurement", "type" : "double" },
+	  		{ "name" : "address", "type" : "string" }
+	  		
 	  		
 	  		
 	  		 ] },
 	  	{ "name" : "Fridgeinfo", "type" : "record" , "fields" : [
 	  
-	  		{ "name" : "id",  "type" : "int" }
+	  		{ "name" : "id",  "type" : "int" },
+	  		{ "name" : "address", "type" : "string" }
+	  		
 	  		
 	  		
 	  		 ] }
@@ -54,7 +64,7 @@
 		      "response": {"type" : "array", "items" :  "string" } 
 	      	  }
 	      	  ,"openFridge" : {
-		      "request": [{"name" :  "id", "type" : "int"}, {"name" :  "user_id", "type" : "int"}],
+		      "request": [{"name" :  "id", "type" : "int"}, {"name" :  "user_id", "type" : "int"}, {"name" :  "useraddr", "type" : "string"}],
 		      "response": {"name" : "success", "type" :  "int" } 
 	      	  }	      	  
 	      	  ,"addItem" : {

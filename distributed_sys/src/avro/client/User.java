@@ -17,6 +17,8 @@ import org.apache.avro.ipc.Transceiver;
 
 import avro.proto.serverproto;
 import avro.proto.userproto;
+import avro.proto.Fridgestate;
+
 
 
 import avro.proto.Lightinfo;
@@ -45,21 +47,28 @@ public class User extends Controller implements userproto {
 	private int id;
 	private boolean fridgeTime;
 	private Fridgeinfo fridge;
+	private String address;
 
-	User(int id, String username){
+	User(int id, String username, String conaddr,String addr){
+		super(conaddr);
+		this.address = addr;
 		this.id = id;
 		fridgeTime = false;
-		fridge = new Fridgeinfo(0);
+		fridge = new Fridgeinfo(0,"");
 	}
 	
 	public int getId(){
 		return this.id;
 	}
 	
+	public String getAddress(){
+		return this.address;
+	}
+	
 	public void run() {
 		if ( fridge.getId() != 0){
 			try{
-				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),fridge.getId()));
+				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(fridge.getAddress().toString()),fridge.getId()));
 			}catch( IOException e){
 				fridgeTime = false;
 				fridge.setId(0);
@@ -118,7 +127,7 @@ public class User extends Controller implements userproto {
 	public void printLights(){
 		if(!fridgeTime){
 			try{
-				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
+				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(this.getControllerAddress()),5000));
 				serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 	
 				List<Lightinfo> lights = proxy.sendLights(this.id);
@@ -140,7 +149,7 @@ public class User extends Controller implements userproto {
 	public void printClients(){
 		if(!fridgeTime){
 			try{
-				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
+				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(this.getControllerAddress()),5000));
 				serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 				List<Clientinfo> clients = proxy.sendClients(this.id);
 				client.close();
@@ -158,7 +167,7 @@ public class User extends Controller implements userproto {
 	public void changeLight(int id){
 		if(!fridgeTime){
 			try{
-				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
+				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(this.getControllerAddress()),5000));
 				serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 	
 				proxy.changeLightStatus(id);
@@ -174,7 +183,7 @@ public class User extends Controller implements userproto {
 	public void changeHomeStatus(){
 		if(!fridgeTime){
 			try{
-				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
+				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(this.getControllerAddress()),5000));
 				serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 				
 				proxy.changeHomeStatus(this.id);
@@ -191,7 +200,7 @@ public class User extends Controller implements userproto {
 	public void printFridgeItems(int id){
 		if(!fridgeTime){
 			try{
-				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
+				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(this.getControllerAddress()),5000));
 				serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 				
 				List<CharSequence> items = proxy.sendFridgeItems(id);
@@ -215,7 +224,7 @@ public class User extends Controller implements userproto {
 	public void printCurrentTemperature(){
 		if(!fridgeTime){
 			try{
-				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
+				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(this.getControllerAddress()),5000));
 				serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 				
 				double value = proxy.getCurrentTemperature(this.id);
@@ -234,7 +243,7 @@ public class User extends Controller implements userproto {
 	public void printTemperatureHistory(int id){
 		if(!fridgeTime){
 			try{
-				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
+				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(this.getControllerAddress()),5000));
 				serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 				
 				List<Double> temps = proxy.getTemperatureHistory(id);
@@ -254,13 +263,16 @@ public class User extends Controller implements userproto {
 	public void openFridge(int id){
 		if(!fridgeTime){
 			try{
-				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
+				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(this.getControllerAddress()),5000));
 				serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
-				int open = proxy.openAFridge(id,this.id);
+				Fridgestate s = proxy.openAFridge(id,this.id);
+				CharSequence addr = s.getAddress();
+				int open = s.getId();
 				if(open == 0){
 					System.out.println("Fridge with id: " + id + " has been opened.");
 					fridgeTime = true;
 					fridge.setId(id);
+					fridge.setAddress(addr);
 				}
 				else if(open == -2){
 					System.out.println("Fridge with id: " + id + " is already being used.");
@@ -277,7 +289,7 @@ public class User extends Controller implements userproto {
 	public void addItemtoFridge(int id,CharSequence item){
 		if(fridgeTime){
 			try{
-				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),id));
+				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(fridge.getAddress().toString()),id));
 				fridgeproto proxy = (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client);
 				if(proxy.addItem(id, item) == 0){
 					System.out.println("Added item: " + item + " to fridge with id: "  + id);
@@ -296,7 +308,7 @@ public class User extends Controller implements userproto {
 	public void removeItemfromFridge(int id,CharSequence item){
 		if(fridgeTime){
 			try{
-				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),id));
+				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(fridge.getAddress().toString()),id));
 				fridgeproto proxy = (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client);
 				int removed = proxy.removeItem(id, item);
 				if(removed == 0){
@@ -319,7 +331,7 @@ public class User extends Controller implements userproto {
 	public void closeFridge(int id){
 		if(fridgeTime){
 			try{
-				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),id));
+				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(fridge.getAddress().toString()),id));
 				fridgeproto proxy = (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client);
 				int status = proxy.closeFridge(id);
 				if(status  == 0){
@@ -344,22 +356,35 @@ public class User extends Controller implements userproto {
 	@Command
 	public void printbackup(){
 		
-		System.out.println(clients.size());
+		for(Clientinfo temp : clients){
+			
+			System.out.println("We have a client of type: " + temp.getType() + " with id: " +  temp.getId());
+		}
+		for(Lightinfo temp : lights){
+			
+			System.out.println("We have a light with id: " +  temp.getId());
+		}
+		
+		for(Userinfo temp : users){
+			
+			System.out.println("We have a user with id: " +  temp.getId());
+		}
+		
 	}
 
 
 	public static void main(String[] args) {
 		Server server = null;
 		try {
-			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
+			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(args[0]),5000));
 			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 			
-			int id = proxy.connect("User");
-			User Bob = new User(id,"Bobby");
+			int id = proxy.connect("User",args[1]);
+			User Bob = new User(id,"Bobby", args[0],args[1]);
 
 			client.close();
 
-			server = new SaslSocketServer(new SpecificResponder(userproto.class, Bob), new InetSocketAddress(InetAddress.getLocalHost(),Bob.getId()));
+			server = new SaslSocketServer(new SpecificResponder(userproto.class, Bob), new InetSocketAddress(InetAddress.getByName(Bob.getAddress()),Bob.getId()));
 			server.start();
 			
 	        Timer timer = new Timer();
@@ -369,7 +394,7 @@ public class User extends Controller implements userproto {
 	                Bob.run();
 	            }
 	        }, 0, 5000);
-			ShellFactory.createConsoleShell("user", "", Bob).commandLoop(); // and three.
+			ShellFactory.createConsoleShell("user", "", Bob).commandLoop();
 			System.exit(1);
 		} catch(IOException e){
 			System.err.println("Error connecting to server ...");

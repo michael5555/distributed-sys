@@ -17,6 +17,9 @@ import avro.proto.lightproto;
 import avro.proto.userproto;
 import avro.proto.fridgeproto;
 
+import avro.proto.Fridgestate;
+
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -41,17 +44,24 @@ public class Controller implements serverproto {
 
 	private final int port = 5000;
 	private int id;
+	private String conaddress;
+	
 	protected List<Clientinfo> clients;
 	protected List<Userinfo> users;
 	protected List<Lightinfo> lights;
 	protected List<List<TSinfo> > measurements;
 	
-	public Controller(){
+	public Controller(String addr){
 		this.id = 1;
+		conaddress = addr;
 		clients = new ArrayList<Clientinfo>();
 		users = new ArrayList<Userinfo>();
 		lights = new ArrayList<Lightinfo>();
 		measurements = new ArrayList<List<TSinfo>>();
+	}
+	
+	public String getControllerAddress() {
+		return this.conaddress;
 	}
 	
 	public int getPort(){
@@ -61,7 +71,7 @@ public class Controller implements serverproto {
 	public synchronized void run() {
 		for(int i  = 0; i < clients.size();i++){
 			try {
-				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),clients.get(i).getId()));
+				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(clients.get(i).getAddress().toString()),clients.get(i).getId()));
 				if( clients.get(i).getType().toString().equals("User") ) {
 					
 					userproto proxy =  (userproto) SpecificRequestor.getClient(userproto.class, client);
@@ -87,20 +97,20 @@ public class Controller implements serverproto {
 	}
 	
 	@Override
-	public synchronized int connect(CharSequence type2) throws AvroRemoteException
+	public synchronized int connect(CharSequence type2,CharSequence address) throws AvroRemoteException
 	{
 		if(type2.toString().equals("User")){
-			users.add( new Userinfo(port + id,true) );
+			users.add( new Userinfo(port + id,true,address) );
 		}
 		else if(type2.toString().equals("Light")){
-			lights.add( new Lightinfo(port + id,false) );
+			lights.add( new Lightinfo(port + id,false,address) );
 		}
 		else if (type2.toString().equals("TS")){
 			List<TSinfo> newlist = new ArrayList<TSinfo>();
-			newlist.add(new TSinfo( port + id,0.0));
+			newlist.add(new TSinfo( port + id,0.0,address));
 			measurements.add(newlist);
 		}
-		clients.add(new Clientinfo(port + id,type2));
+		clients.add(new Clientinfo(port + id,type2,address));
 		System.out.println(" Client connected: " + type2 + " (number: " +  (port + id) + " )");
 		return  port + this.id++;
 	}
@@ -132,7 +142,7 @@ public class Controller implements serverproto {
 		for(Lightinfo temp : lights){
 			if( id == temp.getId()){
 				try {
-				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),id));
+				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(temp.getAddress().toString()),id));
 				lightproto proxy =  (lightproto) SpecificRequestor.getClient(lightproto.class, client);
 				proxy.changeStatus(id,!temp.getStatus());
 				temp.setStatus(!temp.getStatus());
@@ -169,7 +179,7 @@ public class Controller implements serverproto {
 		for(Userinfo temp: users){
 			if(id != temp.getId()){
 				try {
-					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),temp.getId()));
+					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(temp.getAddress().toString()),temp.getId()));
 					userproto prox =  (userproto) SpecificRequestor.getClient(userproto.class, client);
 					prox.reportUserStatus(id,homestatus);
 					client.close();
@@ -183,7 +193,7 @@ public class Controller implements serverproto {
 		if(nobodyAtHome()){
 			for(Lightinfo temp : lights){
 				try {
-					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),temp.getId()));
+					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(temp.getAddress().toString()),temp.getId()));
 					lightproto proxy =  (lightproto) SpecificRequestor.getClient(lightproto.class, client);
 					proxy.changeStatus(temp.getId(),false);
 					client.close();
@@ -197,7 +207,7 @@ public class Controller implements serverproto {
 		else{
 			for(Lightinfo temp : lights){
 				try {
-					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),temp.getId()));
+					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(temp.getAddress().toString()),temp.getId()));
 					lightproto proxy =  (lightproto) SpecificRequestor.getClient(lightproto.class, client);
 					proxy.changeStatus(temp.getId(),temp.getStatus());
 					client.close();
@@ -216,7 +226,7 @@ public class Controller implements serverproto {
 		for(Clientinfo temp : clients){
 			if (temp.getId() == id && temp.getType().toString().equals("Fridge")){
 				try {
-					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),temp.getId()));
+					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(temp.getAddress().toString()),temp.getId()));
 					fridgeproto proxy =  (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client);
 					List<CharSequence> items = proxy.sendItems(temp.getId());
 					client.close();
@@ -235,10 +245,11 @@ public class Controller implements serverproto {
 	public synchronized int sendTSMeasurement(double measurement, int id){	
 		for(List<TSinfo> temp : measurements){
 			if( temp.get(0).getId() == id){
+				CharSequence addr = temp.get(0).getAddress();
 				if(temp.size() == 1 && temp.get(0).getMeasurement() == 0.0){
 					temp.remove(0);
 				}
-				temp.add(new TSinfo(id,measurement));
+				temp.add(new TSinfo(id,measurement,addr));
 				if (temp.size() > 10){
 					temp.remove(0);
 				}
@@ -289,27 +300,39 @@ public class Controller implements serverproto {
 	}
 	
 	@Override
-	public int openAFridge(int id, int userid){
+	public Fridgestate openAFridge(int id, int userid){
+		
+		CharSequence addr = "";
+		CharSequence useraddr = "";
+
+		for(Userinfo temp: users){
+			
+			if (temp.getId() == userid) {
+				
+				useraddr = temp.getAddress();
+			}
+		}
 		for(Clientinfo temp : clients){
 			if(id == temp.getId() && temp.getType().toString().equals("Fridge")){
 				try{
-					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),temp.getId()));
+					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(temp.getAddress().toString()),temp.getId()));
 					fridgeproto proxy =  (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client);
 
-					int i =  proxy.openFridge(id,userid);
+					int i =  proxy.openFridge(id,userid,useraddr);
+					addr = temp.getAddress();
 					client.close();
-					return i;
+					return new Fridgestate(i,addr);
 				}catch(IOException e){}
 			}
 		}
-		return -1;
+		return new Fridgestate(-1,addr);
 	}
 	
 	@Override
 	public int FridgeEmptyMessage(int id){
 		for(Userinfo temp: users){
 			try {
-				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),temp.getId()));
+				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(temp.getAddress().toString()),temp.getId()));
 				userproto prox =  (userproto) SpecificRequestor.getClient(userproto.class, client);
 				prox.reportFridgeEmpty(id);
 				client.close();
@@ -361,7 +384,7 @@ public class Controller implements serverproto {
 
 	public static void main( String[] args){
 		Server server = null;
-		Controller controller = new Controller();
+		Controller controller = new Controller(args[0]);
 		
 		try {
 			server = new SaslSocketServer(new SpecificResponder(serverproto.class, controller), new InetSocketAddress(InetAddress.getLocalHost(),controller.getPort()));
@@ -379,6 +402,7 @@ public class Controller implements serverproto {
                 controller.run();
             }
         }, 0, 5000);
+        
 		try {
 			server.join();
 		}	catch ( InterruptedException e) {

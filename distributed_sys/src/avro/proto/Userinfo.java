@@ -7,10 +7,11 @@ package avro.proto;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class Userinfo extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Userinfo\",\"namespace\":\"avro.proto\",\"fields\":[{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"athome\",\"type\":\"boolean\"}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Userinfo\",\"namespace\":\"avro.proto\",\"fields\":[{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"athome\",\"type\":\"boolean\"},{\"name\":\"address\",\"type\":\"string\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
   @Deprecated public int id;
   @Deprecated public boolean athome;
+  @Deprecated public java.lang.CharSequence address;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -22,9 +23,10 @@ public class Userinfo extends org.apache.avro.specific.SpecificRecordBase implem
   /**
    * All-args constructor.
    */
-  public Userinfo(java.lang.Integer id, java.lang.Boolean athome) {
+  public Userinfo(java.lang.Integer id, java.lang.Boolean athome, java.lang.CharSequence address) {
     this.id = id;
     this.athome = athome;
+    this.address = address;
   }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
@@ -33,6 +35,7 @@ public class Userinfo extends org.apache.avro.specific.SpecificRecordBase implem
     switch (field$) {
     case 0: return id;
     case 1: return athome;
+    case 2: return address;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -42,6 +45,7 @@ public class Userinfo extends org.apache.avro.specific.SpecificRecordBase implem
     switch (field$) {
     case 0: id = (java.lang.Integer)value$; break;
     case 1: athome = (java.lang.Boolean)value$; break;
+    case 2: address = (java.lang.CharSequence)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -76,6 +80,21 @@ public class Userinfo extends org.apache.avro.specific.SpecificRecordBase implem
     this.athome = value;
   }
 
+  /**
+   * Gets the value of the 'address' field.
+   */
+  public java.lang.CharSequence getAddress() {
+    return address;
+  }
+
+  /**
+   * Sets the value of the 'address' field.
+   * @param value the value to set.
+   */
+  public void setAddress(java.lang.CharSequence value) {
+    this.address = value;
+  }
+
   /** Creates a new Userinfo RecordBuilder */
   public static avro.proto.Userinfo.Builder newBuilder() {
     return new avro.proto.Userinfo.Builder();
@@ -99,6 +118,7 @@ public class Userinfo extends org.apache.avro.specific.SpecificRecordBase implem
 
     private int id;
     private boolean athome;
+    private java.lang.CharSequence address;
 
     /** Creates a new Builder */
     private Builder() {
@@ -116,6 +136,10 @@ public class Userinfo extends org.apache.avro.specific.SpecificRecordBase implem
         this.athome = data().deepCopy(fields()[1].schema(), other.athome);
         fieldSetFlags()[1] = true;
       }
+      if (isValidValue(fields()[2], other.address)) {
+        this.address = data().deepCopy(fields()[2].schema(), other.address);
+        fieldSetFlags()[2] = true;
+      }
     }
     
     /** Creates a Builder by copying an existing Userinfo instance */
@@ -128,6 +152,10 @@ public class Userinfo extends org.apache.avro.specific.SpecificRecordBase implem
       if (isValidValue(fields()[1], other.athome)) {
         this.athome = data().deepCopy(fields()[1].schema(), other.athome);
         fieldSetFlags()[1] = true;
+      }
+      if (isValidValue(fields()[2], other.address)) {
+        this.address = data().deepCopy(fields()[2].schema(), other.address);
+        fieldSetFlags()[2] = true;
       }
     }
 
@@ -179,12 +207,38 @@ public class Userinfo extends org.apache.avro.specific.SpecificRecordBase implem
       return this;
     }
 
+    /** Gets the value of the 'address' field */
+    public java.lang.CharSequence getAddress() {
+      return address;
+    }
+    
+    /** Sets the value of the 'address' field */
+    public avro.proto.Userinfo.Builder setAddress(java.lang.CharSequence value) {
+      validate(fields()[2], value);
+      this.address = value;
+      fieldSetFlags()[2] = true;
+      return this; 
+    }
+    
+    /** Checks whether the 'address' field has been set */
+    public boolean hasAddress() {
+      return fieldSetFlags()[2];
+    }
+    
+    /** Clears the value of the 'address' field */
+    public avro.proto.Userinfo.Builder clearAddress() {
+      address = null;
+      fieldSetFlags()[2] = false;
+      return this;
+    }
+
     @Override
     public Userinfo build() {
       try {
         Userinfo record = new Userinfo();
         record.id = fieldSetFlags()[0] ? this.id : (java.lang.Integer) defaultValue(fields()[0]);
         record.athome = fieldSetFlags()[1] ? this.athome : (java.lang.Boolean) defaultValue(fields()[1]);
+        record.address = fieldSetFlags()[2] ? this.address : (java.lang.CharSequence) defaultValue(fields()[2]);
         return record;
       } catch (Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

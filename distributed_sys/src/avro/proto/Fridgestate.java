@@ -6,8 +6,8 @@
 package avro.proto;  
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
-public class Fridgeinfo extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Fridgeinfo\",\"namespace\":\"avro.proto\",\"fields\":[{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"address\",\"type\":\"string\"}]}");
+public class Fridgestate extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Fridgestate\",\"namespace\":\"avro.proto\",\"fields\":[{\"name\":\"id\",\"type\":\"int\"},{\"name\":\"address\",\"type\":\"string\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
   @Deprecated public int id;
   @Deprecated public java.lang.CharSequence address;
@@ -17,12 +17,12 @@ public class Fridgeinfo extends org.apache.avro.specific.SpecificRecordBase impl
    * to their default values from the schema.  If that is desired then
    * one should use <code>newBuilder()</code>. 
    */
-  public Fridgeinfo() {}
+  public Fridgestate() {}
 
   /**
    * All-args constructor.
    */
-  public Fridgeinfo(java.lang.Integer id, java.lang.CharSequence address) {
+  public Fridgestate(java.lang.Integer id, java.lang.CharSequence address) {
     this.id = id;
     this.address = address;
   }
@@ -76,37 +76,37 @@ public class Fridgeinfo extends org.apache.avro.specific.SpecificRecordBase impl
     this.address = value;
   }
 
-  /** Creates a new Fridgeinfo RecordBuilder */
-  public static avro.proto.Fridgeinfo.Builder newBuilder() {
-    return new avro.proto.Fridgeinfo.Builder();
+  /** Creates a new Fridgestate RecordBuilder */
+  public static avro.proto.Fridgestate.Builder newBuilder() {
+    return new avro.proto.Fridgestate.Builder();
   }
   
-  /** Creates a new Fridgeinfo RecordBuilder by copying an existing Builder */
-  public static avro.proto.Fridgeinfo.Builder newBuilder(avro.proto.Fridgeinfo.Builder other) {
-    return new avro.proto.Fridgeinfo.Builder(other);
+  /** Creates a new Fridgestate RecordBuilder by copying an existing Builder */
+  public static avro.proto.Fridgestate.Builder newBuilder(avro.proto.Fridgestate.Builder other) {
+    return new avro.proto.Fridgestate.Builder(other);
   }
   
-  /** Creates a new Fridgeinfo RecordBuilder by copying an existing Fridgeinfo instance */
-  public static avro.proto.Fridgeinfo.Builder newBuilder(avro.proto.Fridgeinfo other) {
-    return new avro.proto.Fridgeinfo.Builder(other);
+  /** Creates a new Fridgestate RecordBuilder by copying an existing Fridgestate instance */
+  public static avro.proto.Fridgestate.Builder newBuilder(avro.proto.Fridgestate other) {
+    return new avro.proto.Fridgestate.Builder(other);
   }
   
   /**
-   * RecordBuilder for Fridgeinfo instances.
+   * RecordBuilder for Fridgestate instances.
    */
-  public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<Fridgeinfo>
-    implements org.apache.avro.data.RecordBuilder<Fridgeinfo> {
+  public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<Fridgestate>
+    implements org.apache.avro.data.RecordBuilder<Fridgestate> {
 
     private int id;
     private java.lang.CharSequence address;
 
     /** Creates a new Builder */
     private Builder() {
-      super(avro.proto.Fridgeinfo.SCHEMA$);
+      super(avro.proto.Fridgestate.SCHEMA$);
     }
     
     /** Creates a Builder by copying an existing Builder */
-    private Builder(avro.proto.Fridgeinfo.Builder other) {
+    private Builder(avro.proto.Fridgestate.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.id)) {
         this.id = data().deepCopy(fields()[0].schema(), other.id);
@@ -118,9 +118,9 @@ public class Fridgeinfo extends org.apache.avro.specific.SpecificRecordBase impl
       }
     }
     
-    /** Creates a Builder by copying an existing Fridgeinfo instance */
-    private Builder(avro.proto.Fridgeinfo other) {
-            super(avro.proto.Fridgeinfo.SCHEMA$);
+    /** Creates a Builder by copying an existing Fridgestate instance */
+    private Builder(avro.proto.Fridgestate other) {
+            super(avro.proto.Fridgestate.SCHEMA$);
       if (isValidValue(fields()[0], other.id)) {
         this.id = data().deepCopy(fields()[0].schema(), other.id);
         fieldSetFlags()[0] = true;
@@ -137,7 +137,7 @@ public class Fridgeinfo extends org.apache.avro.specific.SpecificRecordBase impl
     }
     
     /** Sets the value of the 'id' field */
-    public avro.proto.Fridgeinfo.Builder setId(int value) {
+    public avro.proto.Fridgestate.Builder setId(int value) {
       validate(fields()[0], value);
       this.id = value;
       fieldSetFlags()[0] = true;
@@ -150,7 +150,7 @@ public class Fridgeinfo extends org.apache.avro.specific.SpecificRecordBase impl
     }
     
     /** Clears the value of the 'id' field */
-    public avro.proto.Fridgeinfo.Builder clearId() {
+    public avro.proto.Fridgestate.Builder clearId() {
       fieldSetFlags()[0] = false;
       return this;
     }
@@ -161,7 +161,7 @@ public class Fridgeinfo extends org.apache.avro.specific.SpecificRecordBase impl
     }
     
     /** Sets the value of the 'address' field */
-    public avro.proto.Fridgeinfo.Builder setAddress(java.lang.CharSequence value) {
+    public avro.proto.Fridgestate.Builder setAddress(java.lang.CharSequence value) {
       validate(fields()[1], value);
       this.address = value;
       fieldSetFlags()[1] = true;
@@ -174,16 +174,16 @@ public class Fridgeinfo extends org.apache.avro.specific.SpecificRecordBase impl
     }
     
     /** Clears the value of the 'address' field */
-    public avro.proto.Fridgeinfo.Builder clearAddress() {
+    public avro.proto.Fridgestate.Builder clearAddress() {
       address = null;
       fieldSetFlags()[1] = false;
       return this;
     }
 
     @Override
-    public Fridgeinfo build() {
+    public Fridgestate build() {
       try {
-        Fridgeinfo record = new Fridgeinfo();
+        Fridgestate record = new Fridgestate();
         record.id = fieldSetFlags()[0] ? this.id : (java.lang.Integer) defaultValue(fields()[0]);
         record.address = fieldSetFlags()[1] ? this.address : (java.lang.CharSequence) defaultValue(fields()[1]);
         return record;

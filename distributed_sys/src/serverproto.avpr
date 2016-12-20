@@ -7,7 +7,9 @@
 	  	{ "name" : "Lightinfo", "type" : "record" , "fields" : [
 	  
 	  		{ "name" : "id",  "type" : "int" },
-	  		{ "name" : "status", "type" : "boolean" }
+	  		{ "name" : "status", "type" : "boolean" },
+	  		{ "name" : "address", "type" : "string" }
+	  		
 	  		
 	  		
 	  		 ] },
@@ -15,7 +17,9 @@
 	    { "name" : "Userinfo", "type" : "record" , "fields" : [
 	  
 	  		{ "name" : "id",  "type" : "int" },
-	  		{ "name" : "athome", "type" : "boolean" }
+	  		{ "name" : "athome", "type" : "boolean" },
+	  		{ "name" : "address", "type" : "string" }
+	  		
 	  		
 	  		
 	  		
@@ -24,20 +28,26 @@
 	  	{ "name" : "Clientinfo", "type" : "record" , "fields" : [
 	  
 	  		{ "name" : "id",  "type" : "int" },
-	  		{ "name" : "type", "type" : "string" }
+	  		{ "name" : "type", "type" : "string" },
+	  		{ "name" : "address", "type" : "string" }
+	  		
 	  		
 	  		
 	  		 ] },
 	  	{ "name" : "TSinfo", "type" : "record" , "fields" : [
 	  
 	  		{ "name" : "id",  "type" : "int" },
-	  		{ "name" : "measurement", "type" : "double" }
+	  		{ "name" : "measurement", "type" : "double" },
+	  		{ "name" : "address", "type" : "string" }
+	  		
 	  		
 	  		
 	  		 ] },
 	  	{ "name" : "Fridgeinfo", "type" : "record" , "fields" : [
 	  
-	  		{ "name" : "id",  "type" : "int" }
+	  		{ "name" : "id",  "type" : "int" },
+	  		{ "name" : "address", "type" : "string" }
+	  		
 	  		
 	  		
 	  		 ] }
@@ -49,7 +59,7 @@
 	  "messages":
 	  {
 		    "connect": {
-		      "request": [{"name" :  "type2", "type" : "string"}],
+		      "request": [{"name" :  "type2", "type" : "string"},{"name" :  "address", "type" : "string"}],
 		      "response": "int"
 		      }
 
@@ -88,7 +98,11 @@
 	      	  }	      	 
 	      	  ,"openAFridge" : {
 	      	  "request": [{"name" :  "id", "type" : "int"}, {"name" :  "userid", "type" : "int"}],
-		      "response": {"name" : "success", "type" :  "int" }
+		      "response": {"name" : "Fridgestate", "type" :  "record" , "fields" : [
+		      	  		{ "name" : "id",  "type" : "int" },
+	  					{ "name" : "address", "type" : "string" }
+	  					
+	  			 ] }
 	      	  
 	      	  }
 	      	  ,"FridgeEmptyMessage" : {

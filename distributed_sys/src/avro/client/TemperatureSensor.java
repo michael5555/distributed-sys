@@ -23,10 +23,23 @@ public class TemperatureSensor  {
 	private double measurement;
 	private Random gen = new Random();
 	private int id;
+	private String conaddress;
+	private String address;
 
-	public TemperatureSensor(int id) {
+
+	public TemperatureSensor(int id, String conaddr, String addr) {
+		this.conaddress = conaddr;
+		this.address = addr;
 		this.id = id;
 		measurement = gen.nextGaussian() + 20;
+	}
+	
+	public String getControllerAddress() {
+		return conaddress;
+	}
+	
+	public String getAddress() {
+		return address;
 	}
 	
 	double getMeasurement() {
@@ -54,13 +67,13 @@ public class TemperatureSensor  {
 	public static void main(String[] args) {
 		Server server = null;
 		try {
-			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getLocalHost(),5000));
+			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(args[0]),5000));
 			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 			
-			int id = proxy.connect("TS");
-			TemperatureSensor s = new TemperatureSensor(id);
+			int id = proxy.connect("TS",args[1]);
+			TemperatureSensor s = new TemperatureSensor(id,args[0],args[1]);
 			
-			server = new SaslSocketServer(new SpecificResponder(userproto.class, s), new InetSocketAddress(InetAddress.getLocalHost(),s.getId()));
+			server = new SaslSocketServer(new SpecificResponder(userproto.class, s), new InetSocketAddress(InetAddress.getByName(s.getAddress()),s.getId()));
 			server.start();
 
 			Timer timer = new Timer();
