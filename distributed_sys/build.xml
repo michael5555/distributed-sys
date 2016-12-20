@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. --><project basedir="." default="build" name="distributed_sys">
+    <property environment="env"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.8"/>
+    <property name="source" value="1.8"/>
+    <path id="distributed_sys.classpath">
+        <pathelement location="bin"/>
+        <pathelement location="lib/avro-1.7.7.jar"/>
+        <pathelement location="lib/avro-ipc-1.7.7.jar"/>
+        <pathelement location="lib/jackson-core-asl-1.9.13.jar"/>
+        <pathelement location="lib/jackson-mapper-asl-1.9.13.jar"/>
+        <pathelement location="lib/slf4j-api-1.7.7.jar"/>
+        <pathelement location="lib/slf4j-simple-1.7.7.jar"/>
+        <pathelement location="lib/asg.cliche-110413.jar"/>
+    </path>
+    <target name="init">
+        <mkdir dir="bin"/>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="src">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="bin"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="distributed_sys.classpath"/>
+        </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+        <copy todir="${ant.library.dir}">
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </copy>
+        <unzip dest="${ant.library.dir}">
+            <patternset includes="jdtCompilerAdapter.jar"/>
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </unzip>
+    </target>
+    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+        <antcall target="build"/>
+    </target>
+    <target name="Controller">
+        <java classname="avro.server.Controller" failonerror="true" fork="yes">
+            <arg line="&quot;192.168.0.213&quot;"/>
+            <classpath refid="distributed_sys.classpath"/>
+        </java>
+    </target>
+    <target name="Fridge">
+        <java classname="avro.client.Fridge" failonerror="true" fork="yes">
+            <arg line="&quot;192.168.0.213&quot; &quot;192.168.0.213&quot;"/>
+            <classpath refid="distributed_sys.classpath"/>
+        </java>
+    </target>
+    <target name="Light">
+        <java classname="avro.client.Light" failonerror="true" fork="yes">
+            <arg line="&quot;192.168.0.213&quot; &quot;192.168.0.213&quot;"/>
+            <classpath refid="distributed_sys.classpath"/>
+        </java>
+    </target>
+    <target name="TemperatureSensor">
+        <java classname="avro.client.TemperatureSensor" failonerror="true" fork="yes">
+            <arg line="&quot;192.168.0.213&quot; &quot;192.168.0.213&quot;"/>
+            <classpath refid="distributed_sys.classpath"/>
+        </java>
+    </target>
+    <target name="User">
+        <java classname="avro.client.User" failonerror="true" fork="yes">
+            <arg line="&quot;192.168.0.213&quot; &quot;192.168.0.213&quot;"/>
+            <classpath refid="distributed_sys.classpath"/>
+        </java>
+    </target>
+</project>
