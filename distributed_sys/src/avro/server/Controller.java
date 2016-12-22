@@ -387,7 +387,7 @@ public class Controller implements serverproto {
 		Controller controller = new Controller(args[0]);
 		
 		try {
-			server = new SaslSocketServer(new SpecificResponder(serverproto.class, controller), new InetSocketAddress(InetAddress.getLocalHost(),controller.getPort()));
+			server = new SaslSocketServer(new SpecificResponder(serverproto.class, controller), new InetSocketAddress(InetAddress.getByName(args[0]),controller.getPort()));
 		} catch (IOException e) {
 			System.err.println(" error Failed to start server");
 			e.printStackTrace(System.err);
