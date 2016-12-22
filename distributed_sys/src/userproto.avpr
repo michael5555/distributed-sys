@@ -88,6 +88,16 @@
 		      "response": {"name" : "success", "type" :  "int" }
 	      	  
 	      	  }
+	      	  ,"election" : {
+	      	  "request": [{"name" :  "id", "type" : "int" }],
+		      "response": {"name" : "success", "type" :  "int" }
+	      	  
+	      	  }
+	      	  ,"elected" : {
+	      	  "request": [{"name" :  "id", "type" : "int" }],
+		      "response": {"name" : "success", "type" :  "int" }
+	      	  
+	      	  }
 	      	  
  	 }
  }
