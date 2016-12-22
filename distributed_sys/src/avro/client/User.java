@@ -224,7 +224,6 @@ public class User extends Controller implements userproto {
 	@Override
 	public int election(int id) {
 		
-		System.out.println("our election has commenced");
 		
 		int next = getNextIdAndType();
 		
@@ -291,7 +290,6 @@ public class User extends Controller implements userproto {
 		String type = clients.get(next).getType().toString();
 		
 		
-		System.out.println("next candidate id is : " +  clients.get(next).getId());
 		participant = true;
 		sendElectionMessage(next, type, this.id);
 	}
@@ -312,7 +310,9 @@ public class User extends Controller implements userproto {
 				for(Lightinfo temp : lights){
 					System.out.println("We have a light with id: " + temp.getId() + " ,its status is currently: " +  temp.getStatus());
 				}
-			}catch(IOException e){}
+			}catch(IOException e){
+				sendElection();
+			}
 		}
 		else{
 			System.out.println("Right now you are connected to a Fridge");
@@ -330,7 +330,10 @@ public class User extends Controller implements userproto {
 				for(Clientinfo temp : clients){
 					System.out.println("We have a client with id: " + temp.getId() + " ,its type is: " +  temp.getType());
 				}
-			}catch(IOException e){}
+			}catch(IOException e){
+				sendElection();
+
+			}
 		}
 		else{
 			System.out.println("Right now you are connected to a Fridge");
@@ -346,7 +349,10 @@ public class User extends Controller implements userproto {
 	
 				proxy.changeLightStatus(id);
 				client.close();
-			}catch(IOException e){}
+			}catch(IOException e){
+				sendElection();
+
+			}
 		}		
 		else{
 			System.out.println("Right now you are connected to a Fridge");
@@ -363,7 +369,10 @@ public class User extends Controller implements userproto {
 				proxy.changeHomeStatus(this.id);
 				client.close();
 
-			}catch(IOException e){}
+			}catch(IOException e){
+				sendElection();
+
+			}
 		}
 		else{
 			System.out.println("Right now you are connected to a Fridge");
@@ -387,7 +396,10 @@ public class User extends Controller implements userproto {
 					System.out.println("Fridge has : " + temp);
 				}
 		
-			}catch(IOException e){}
+			}catch(IOException e){
+				sendElection();
+
+			}
 		}
 		else{
 			System.out.println("Right now you are connected to a Fridge");
@@ -406,7 +418,10 @@ public class User extends Controller implements userproto {
 
 				System.out.println("Current temperature: "  + value);
 		
-			}catch(IOException e){}
+			}catch(IOException e){
+				sendElection();
+
+			}
 		}		
 		else{
 			System.out.println("Right now you are connected to a Fridge");
@@ -426,7 +441,10 @@ public class User extends Controller implements userproto {
 				for(Double temp : temps){
 					System.out.print( temp + ", ");
 				}
-			}catch(IOException e){}
+			}catch(IOException e){
+				sendElection();
+
+			}
 		}
 		else{
 			System.out.println("Right now you are connected to a Fridge");
@@ -452,7 +470,10 @@ public class User extends Controller implements userproto {
 					System.out.println("Fridge with id: " + id + " is already being used.");
 				}
 				client.close();
-			}catch(IOException e){}
+			}catch(IOException e){
+				sendElection();
+
+			}
 		}
 		else{
 			System.out.println("Right now you are connected to a Fridge");
