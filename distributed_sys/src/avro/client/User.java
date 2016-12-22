@@ -50,6 +50,7 @@ public class User extends Controller implements userproto {
 	private boolean fridgeTime;
 	private Fridgeinfo fridge;
 	private String address;
+	private boolean participant = false;
 	
 	private int controllerport = 5000;
 
@@ -126,14 +127,8 @@ public class User extends Controller implements userproto {
 		return 0;
 	}
 	
-	@Override
-	public int election(int id) {
-		
-		System.out.println("our election has commenced");
-		
+	public int getNextIdAndType(){
 		int me = 0;
-		int next = 0;
-		String type = "";
 		
 		for(int i = 0; i < clients.size(); i++) {
 			
@@ -143,127 +138,126 @@ public class User extends Controller implements userproto {
 				break;
 			}
 		}
-		
 		for(int i = me + 1; i <= clients.size(); i++) {
 			
-			if (i >= clients.size() - 1){
+			if (i > clients.size() - 1){
 				
 				i = 0;
 			}
 			
 			if (clients.get(i).getType().toString().equals("User") || clients.get(i).getType().toString().equals("Fridge") ){
-				
-				if (clients.get(i).getType().toString().equals("User")) {
-					
-					type = "User";
-				}
-				else {
-					type = "Fridge";
-				}
-				next = i;
-				break;
+
+				int next = i;
+				return next;
 			}
 		}
+		return -1;
+	}
+	
+	public void  sendElectionMessage(int next,String type,int id) {
+		
+		try{
+			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(clients.get(next).getAddress().toString()),clients.get(next).getId()));
+			if(type == "User"){
+				Thread t1 = new Thread(new Runnable() {
+				     public void run() {
+				    	 try{
+							userproto.Callback proxy = SpecificRequestor.getClient(userproto.Callback.class, client);
+							CallFuture<Integer> future = new CallFuture<Integer>();
+							proxy.election(id, future);
+						}catch(IOException e){}
+				     }
+				});  
+				t1.start();
+
+
+			}
+			else {
+				Thread t1 = new Thread(new Runnable() {
+				     public void run() {
+				    	 try{
+							userproto.Callback proxy = SpecificRequestor.getClient(userproto.Callback.class, client);
+							CallFuture<Integer> future = new CallFuture<Integer>();
+							proxy.election(id, future);
+						}catch(IOException e){}
+				     }
+				});  
+				t1.start();
+			}
+		}catch(IOException e){}
+		
+	}
+	
+	public void  sendElectedMessage(int next,String type,int id) {
+		
+		try{
+			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(clients.get(next).getAddress().toString()),clients.get(next).getId()));
+			if(type == "User"){
+				Thread t1 = new Thread(new Runnable() {
+				     public void run() {
+				    	 try{
+							userproto.Callback proxy = SpecificRequestor.getClient(userproto.Callback.class, client);
+							CallFuture<Integer> future = new CallFuture<Integer>();
+							proxy.elected(id, future);
+						}catch(IOException e){}
+				     }
+				});  
+				t1.start();	
+			}
+			else {
+				Thread t1 = new Thread(new Runnable() {
+				     public void run() {
+				    	 try{
+							fridgeproto.Callback proxy = SpecificRequestor.getClient(fridgeproto.Callback.class, client);
+							CallFuture<Integer> future = new CallFuture<Integer>();
+							proxy.elected(id, future);
+						}catch(IOException e){}
+				     }
+				});  
+				t1.start();	
+
+			}
+		}catch(IOException e){}
+	}
+
+	
+	@Override
+	public int election(int id) {
+		
+		System.out.println("our election has commenced");
+		
+		int next = getNextIdAndType();
+		
+		String type = clients.get(next).getType().toString();
+		
+
 		
 		if(id > this.id) {
-			
 			//forward election
-			try{
-				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(clients.get(next).getAddress().toString()),clients.get(next).getId()));
-				if(type == "User"){
-					Thread t1 = new Thread(new Runnable() {
-					     public void run() {
-					    	 try{
-								userproto.Callback proxy = SpecificRequestor.getClient(userproto.Callback.class, client);
-								CallFuture<Integer> future = new CallFuture<Integer>();
-								proxy.election(id, future);
-							}catch(IOException e){}
-					     }
-					});  
-					t1.start();
+			
+			sendElectionMessage(next, type, id);
+			participant = true;
 
 
-				}
-				else {
-					Thread t1 = new Thread(new Runnable() {
-					     public void run() {
-					    	 try{
-								userproto.Callback proxy = SpecificRequestor.getClient(userproto.Callback.class, client);
-								CallFuture<Integer> future = new CallFuture<Integer>();
-								proxy.election(id, future);
-							}catch(IOException e){}
-					     }
-					});  
-					t1.start();
-				}
-			}catch(IOException e){}
 
 		}
 		
 		if (id < this.id ) {
-			int myid = this.id;
 			//forward election with my id
-			try{
-				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(clients.get(next).getAddress().toString()),clients.get(next).getId()));
-				if(type == "User"){
-					Thread t1 = new Thread(new Runnable() {
-					     public void run() {
-					    	 try{
-								userproto.Callback proxy = SpecificRequestor.getClient(userproto.Callback.class, client);
-								CallFuture<Integer> future = new CallFuture<Integer>();
-								proxy.election(myid, future);
-							}catch(IOException e){}
-					     }
-					});  
-					t1.start();				}
-				else {
-					Thread t1 = new Thread(new Runnable() {
-					     public void run() {
-					    	 try{
-								fridgeproto.Callback proxy = SpecificRequestor.getClient(fridgeproto.Callback.class, client);
-								CallFuture<Integer> future = new CallFuture<Integer>();
-								proxy.election(myid, future);
-							}catch(IOException e){}
-					     }
-					});  
-					t1.start();	
-				}
-			}catch(IOException e){}
+			if(participant == false){
+				sendElectionMessage(next, type, this.id);
+				participant = true;
+
+			}
 		}
 		
 		if (id == this.id){
-			
+			participant = false;
 			System.out.println("Yay");
 			
 			//send elected
-			try{
-				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(clients.get(next).getAddress().toString()),clients.get(next).getId()));
-				if(type == "User"){
-					Thread t1 = new Thread(new Runnable() {
-					     public void run() {
-					    	 try{
-								userproto.Callback proxy = SpecificRequestor.getClient(userproto.Callback.class, client);
-								CallFuture<Integer> future = new CallFuture<Integer>();
-								proxy.election(id, future);
-							}catch(IOException e){}
-					     }
-					});  
-					t1.start();	
-				}
-				else {
-					Thread t1 = new Thread(new Runnable() {
-					     public void run() {
-					    	 try{
-								fridgeproto.Callback proxy = SpecificRequestor.getClient(fridgeproto.Callback.class, client);
-								CallFuture<Integer> future = new CallFuture<Integer>();
-								proxy.election(id, future);
-							}catch(IOException e){}
-					     }
-					});  
-					t1.start();	
+			sendElectedMessage(next, type, id);
 
-				}
-			}catch(IOException e){}
 		}
 		
 		return 0;
@@ -272,73 +266,17 @@ public class User extends Controller implements userproto {
 	@Override
 	public int elected(int id) {
 		
-		int me = 0;
-		int next = 0;
-		String type = "";
+		int next = getNextIdAndType();
 		
-		for(int i = 0; i < clients.size(); i++) {
-			
-			if( clients.get(i).getId() == this.id ){
-				
-				me = i;
-				break;
-			}
-		}
-		
-		for(int i = me + 1; i <= clients.size(); i++) {
-			
-			if (i >= clients.size() - 1){
-				
-				i = 0;
-			}
-			
-			if (clients.get(i).getType().toString().equals("User") || clients.get(i).getType().toString().equals("Fridge") ){
-				
-				if (clients.get(i).getType().toString().equals("User")) {
-					
-					type = "User";
-				}
-				else {
-					type = "Fridge";
-				}
-				next = i;
-				break;
-			}
-		}
+		String type = clients.get(next).getType().toString();
 		
 		if (id != this.id){
-			
+			participant = false;
 			//forward elected
-			try{
-				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(clients.get(next).getAddress().toString()),clients.get(next).getId()));
-				if(type == "User"){
-					Thread t1 = new Thread(new Runnable() {
-					     public void run() {
-					    	 try{
-								userproto.Callback proxy = SpecificRequestor.getClient(userproto.Callback.class, client);
-								CallFuture<Integer> future = new CallFuture<Integer>();
-								proxy.election(id, future);
-							}catch(IOException e){}
-					     }
-					});  
-					t1.start();	
-				}
-				else {
-					
-					Thread t1 = new Thread(new Runnable() {
-					     public void run() {
-					    	 try{
-								fridgeproto.Callback proxy = SpecificRequestor.getClient(fridgeproto.Callback.class, client);
-								CallFuture<Integer> future = new CallFuture<Integer>();
-								proxy.election(id, future);
-							}catch(IOException e){}
-					     }
-					});  
-					t1.start();	
-				}
-			}catch(IOException e){}
+			sendElectedMessage(next, type, id);
 
 		}
+
 		
 		return 0;
 	}
@@ -348,59 +286,14 @@ public class User extends Controller implements userproto {
 		
 		System.out.println("we started election");
 		
-		int me = 0;
-		int next = 0;
-		String type = "";
+		int next = getNextIdAndType();
 		
-		for(int i = 0; i < clients.size(); i++) {
-			
-			if( clients.get(i).getId() == this.id ){
-				
-				me = i;
-				break;
-			}
-		}
+		String type = clients.get(next).getType().toString();
 		
-		System.out.println("my id is : " +  clients.get(me).getId());
-
 		
-		for(int i = me + 1; i <= clients.size(); i++) {
-			
-			if (i > clients.size() - 1){
-				
-				i = 0;
-			}
-			
-			if (clients.get(i).getType().toString().equals("User") || clients.get(i).getType().toString().equals("Fridge") ){
-				
-				if (clients.get(i).getType().toString().equals("User")) {
-					
-					type = "User";
-				}
-				else {
-					type = "Fridge";
-				}
-				next = i;
-				break;
-			}
-		}
 		System.out.println("next candidate id is : " +  clients.get(next).getId());
-
-		try{
-			System.out.println(clients.get(next).getId());
-			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(clients.get(next).getAddress().toString()),clients.get(next).getId()));
-			if(type == "User"){
-				userproto.Callback proxy = SpecificRequestor.getClient(userproto.Callback.class, client);
-				CallFuture<Integer> future = new CallFuture<Integer>();
-				proxy.election(this.id, future);
-			}
-			else {
-				
-				fridgeproto.Callback proxy = SpecificRequestor.getClient(fridgeproto.Callback.class, client);
-				CallFuture<Integer> future = new CallFuture<Integer>();
-				proxy.election(this.id, future);
-			}
-		}catch(IOException e){}
+		participant = true;
+		sendElectionMessage(next, type, this.id);
 	}
 
 	

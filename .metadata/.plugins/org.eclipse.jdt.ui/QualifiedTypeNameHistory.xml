@@ -5,4 +5,6 @@
 <fullyQualifiedTypeName name="avro.proto.Fridgeinfo"/>
 <fullyQualifiedTypeName name="avro.proto.Userinfo"/>
 <fullyQualifiedTypeName name="java.net.InetAddress"/>
+<fullyQualifiedTypeName name="org.apache.avro.ipc.specific.SpecificRequestor"/>
+<fullyQualifiedTypeName name="avro.proto.userproto.Callback"/>
 </qualifiedTypeNameHistroy>

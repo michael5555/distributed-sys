@@ -16,6 +16,7 @@ import org.apache.avro.ipc.Transceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
 import org.apache.avro.ipc.specific.SpecificResponder;
 
+import asg.cliche.Command;
 import avro.proto.serverproto;
 import avro.proto.userproto;
 import avro.proto.Clientinfo;
@@ -34,6 +35,8 @@ public class Fridge extends Controller implements fridgeproto  {
 	private boolean open;
 	private Userinfo connected;
 	private String address;
+	private boolean participant = false;
+
 
 
 	public Fridge(int id, String conaddr, String addr) {
@@ -157,12 +160,9 @@ public class Fridge extends Controller implements fridgeproto  {
 		return 0;
 	}
 	
-	@Override
-	public int election(int id) {
-		
+	
+	public int getNextIdAndType(){
 		int me = 0;
-		int next = 0;
-		String type = "";
 		
 		for(int i = 0; i < clients.size(); i++) {
 			
@@ -172,84 +172,126 @@ public class Fridge extends Controller implements fridgeproto  {
 				break;
 			}
 		}
-		
-		for(int i = me + 1; i < clients.size(); i++) {
+		for(int i = me + 1; i <= clients.size(); i++) {
 			
-			if (i >= clients.size() - 1){
+			if (i > clients.size() - 1){
 				
 				i = 0;
 			}
 			
 			if (clients.get(i).getType().toString().equals("User") || clients.get(i).getType().toString().equals("Fridge") ){
-				
-				if (clients.get(i).getType().toString().equals("User")) {
-					
-					type = "User";
-				}
-				else {
-					type = "Fridge";
-				}
-				next = i;
-				break;
+
+
+				int next = i;
+				return next;
 			}
 		}
+		return -1;
+	}
+	
+	public void  sendElectionMessage(int next,String type,int id) {
+		
+		try{
+			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(clients.get(next).getAddress().toString()),clients.get(next).getId()));
+			if(type == "User"){
+				Thread t1 = new Thread(new Runnable() {
+				     public void run() {
+				    	 try{
+							userproto.Callback proxy = SpecificRequestor.getClient(userproto.Callback.class, client);
+							CallFuture<Integer> future = new CallFuture<Integer>();
+							proxy.election(id, future);
+						}catch(IOException e){}
+				     }
+				});  
+				t1.start();
+
+
+			}
+			else {
+				Thread t1 = new Thread(new Runnable() {
+				     public void run() {
+				    	 try{
+							userproto.Callback proxy = SpecificRequestor.getClient(userproto.Callback.class, client);
+							CallFuture<Integer> future = new CallFuture<Integer>();
+							proxy.election(id, future);
+						}catch(IOException e){}
+				     }
+				});  
+				t1.start();
+			}
+		}catch(IOException e){}
+		
+	}
+	
+	public void  sendElectedMessage(int next,String type,int id) {
+		
+		try{
+			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(clients.get(next).getAddress().toString()),clients.get(next).getId()));
+			if(type == "User"){
+				Thread t1 = new Thread(new Runnable() {
+				     public void run() {
+				    	 try{
+							userproto.Callback proxy = SpecificRequestor.getClient(userproto.Callback.class, client);
+							CallFuture<Integer> future = new CallFuture<Integer>();
+							proxy.elected(id, future);
+						}catch(IOException e){}
+				     }
+				});  
+				t1.start();	
+			}
+			else {
+				Thread t1 = new Thread(new Runnable() {
+				     public void run() {
+				    	 try{
+							fridgeproto.Callback proxy = SpecificRequestor.getClient(fridgeproto.Callback.class, client);
+							CallFuture<Integer> future = new CallFuture<Integer>();
+							proxy.elected(id, future);
+						}catch(IOException e){}
+				     }
+				});  
+				t1.start();	
+
+			}
+		}catch(IOException e){}
+	}
+
+	
+	@Override
+	public int election(int id) {
+		
+		
+		int next = getNextIdAndType();
+		
+		String type = clients.get(next).getType().toString();
+		
+
 		
 		if(id > this.id) {
-			
 			//forward election
-			try{
-				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(clients.get(next).getAddress().toString()),clients.get(next).getId()));
-				if(type == "User"){
-					userproto.Callback proxy = SpecificRequestor.getClient(userproto.Callback.class, client);
-					CallFuture<Integer> future = new CallFuture<Integer>();
-					proxy.election(id, future);
-				}
-				else {
-					
-					fridgeproto.Callback proxy = SpecificRequestor.getClient(fridgeproto.Callback.class, client);
-					CallFuture<Integer> future = new CallFuture<Integer>();
-					proxy.election(id, future);
-				}
-			}catch(IOException e){}
+			
+			sendElectionMessage(next, type, id);
+			participant = true;
+
+
 
 		}
 		
 		if (id < this.id ) {
-			
 			//forward election with my id
-			try{
-				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(clients.get(next).getAddress().toString()),clients.get(next).getId()));
-				if(type == "User"){
-					userproto.Callback proxy = SpecificRequestor.getClient(userproto.Callback.class, client);
-					CallFuture<Integer> future = new CallFuture<Integer>();
-					proxy.election(this.id, future);
-				}
-				else {
-					
-					fridgeproto.Callback proxy = SpecificRequestor.getClient(fridgeproto.Callback.class, client);
-					CallFuture<Integer> future = new CallFuture<Integer>();
-					proxy.election(this.id, future);
-				}
-			}catch(IOException e){}
+			if(participant == false){
+				sendElectionMessage(next, type, this.id);
+				participant = true;
+
+			}
 		}
 		
 		if (id == this.id){
+			participant = false;
+			System.out.println("Yay");
 			
 			//send elected
-			try{
-				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(clients.get(next).getAddress().toString()),clients.get(next).getId()));
-				if(type == "User"){
-					userproto.Callback proxy = SpecificRequestor.getClient(userproto.Callback.class, client);
-					CallFuture<Integer> future = new CallFuture<Integer>();
-					proxy.elected(this.id, future);
-				}
-				else {
-					
-					fridgeproto.Callback proxy = SpecificRequestor.getClient(fridgeproto.Callback.class, client);
-					CallFuture<Integer> future = new CallFuture<Integer>();
-					proxy.elected(this.id, future);
-				}
-			}catch(IOException e){}
+			sendElectedMessage(next, type, id);
+
 		}
 		
 		return 0;
@@ -258,61 +300,33 @@ public class Fridge extends Controller implements fridgeproto  {
 	@Override
 	public int elected(int id) {
 		
-		int me = 0;
-		int next = 0;
-		String type = "";
+		int next = getNextIdAndType();
 		
-		for(int i = 0; i < clients.size(); i++) {
-			
-			if( clients.get(i).getId() == this.id ){
-				
-				me = i;
-				break;
-			}
-		}
-		
-		for(int i = me + 1; i < clients.size(); i++) {
-			
-			if (i >= clients.size() - 1){
-				
-				i = 0;
-			}
-			
-			if (clients.get(i).getType().toString().equals("User") || clients.get(i).getType().toString().equals("Fridge") ){
-				
-				if (clients.get(i).getType().toString().equals("User")) {
-					
-					type = "User";
-				}
-				else {
-					type = "Fridge";
-				}
-				next = i;
-				break;
-			}
-		}
+		String type = clients.get(next).getType().toString();
 		
 		if (id != this.id){
-			
+			participant = false;
 			//forward elected
-			try{
-				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(clients.get(next).getAddress().toString()),clients.get(next).getId()));
-				if(type == "User"){
-					userproto.Callback proxy = SpecificRequestor.getClient(userproto.Callback.class, client);
-					CallFuture<Integer> future = new CallFuture<Integer>();
-					proxy.elected(id, future);
-				}
-				else {
-					
-					fridgeproto.Callback proxy = SpecificRequestor.getClient(fridgeproto.Callback.class, client);
-					CallFuture<Integer> future = new CallFuture<Integer>();
-					proxy.elected(id, future);
-				}
-			}catch(IOException e){}
+			sendElectedMessage(next, type, id);
 
 		}
 		
 		return 0;
+	}
+	
+	@Command
+	public void  sendElection() {
+		
+		System.out.println("we started election");
+		
+		int next = getNextIdAndType();
+		
+		String type = clients.get(next).getType().toString();
+		
+		
+		System.out.println("next candidate id is : " +  clients.get(next).getId());
+		participant = true;
+		sendElectionMessage(next, type, this.id);
 	}
 
 	public static void main(String[] args) {
