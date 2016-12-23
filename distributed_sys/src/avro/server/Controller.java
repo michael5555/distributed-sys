@@ -44,7 +44,7 @@ public class Controller implements serverproto {
 
 	private final int port = 5000;
 	private int id;
-	private String conaddress;
+	protected String conaddress;
 	
 	protected List<Clientinfo> clients;
 	protected List<Userinfo> users;

@@ -14,17 +14,20 @@ import org.apache.avro.ipc.specific.SpecificResponder;
 
 import avro.proto.serverproto;
 import avro.proto.userproto;
+import avro.proto.tsproto;
+
 
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class TemperatureSensor  {
+public class TemperatureSensor implements tsproto  {
 	
 	private double measurement;
 	private Random gen = new Random();
 	private int id;
 	private String conaddress;
 	private String address;
+	private int controllerport = 5000;
 
 
 	public TemperatureSensor(int id, String conaddr, String addr) {
@@ -36,6 +39,10 @@ public class TemperatureSensor  {
 	
 	public String getControllerAddress() {
 		return conaddress;
+	}
+	
+	public int getControllerPort() {
+		return controllerport;
 	}
 	
 	public String getAddress() {
@@ -62,6 +69,15 @@ public class TemperatureSensor  {
 		return measurement;
 	}
 	
+	@Override
+	public int setcontrollerinfo(int port, CharSequence address) {
+		
+		controllerport = port;
+		conaddress = address.toString();
+		
+		return 0;
+	}
+	
 
 
 	public static void main(String[] args) {
@@ -73,6 +89,8 @@ public class TemperatureSensor  {
 			int id = proxy.connect("TS",args[1]);
 			TemperatureSensor s = new TemperatureSensor(id,args[0],args[1]);
 			
+			client.close();
+			
 			server = new SaslSocketServer(new SpecificResponder(userproto.class, s), new InetSocketAddress(InetAddress.getByName(s.getAddress()),s.getId()));
 			server.start();
 
@@ -82,7 +100,11 @@ public class TemperatureSensor  {
 				@Override
 				public void run(){
 					try {
-						proxy.sendTSMeasurement(s.nextMeasurement(),id);
+						Transceiver client2 = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(s.getControllerAddress()),s.getControllerPort()));
+						serverproto proxy2 =  (serverproto) SpecificRequestor.getClient(serverproto.class, client2);
+
+						proxy2.sendTSMeasurement(s.nextMeasurement(),id);
+						client2.close();
 						System.out.println(s.getMeasurement());
 					}catch(IOException e){}
 				}

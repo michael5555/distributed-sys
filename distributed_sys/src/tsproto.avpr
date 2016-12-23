@@ -1,16 +1,13 @@
 { 
   "namespace": "avro.proto",
-  "protocol": "lightproto",
+  "protocol": "tsproto",
   
   
 
 	  "messages":
 	  {
-			 "changeStatus" : {
-		      "request": [{"name" :  "id", "type" : "int"},{"name" :  "lightstatus", "type" : "boolean"}],
-		      "response": "int"
-	      	  }
-	      	  ,"setcontrollerinfo" : {
+
+	      	  "setcontrollerinfo" : {
 	      	  "request": [{"name" :  "port", "type" : "int" },{"name" :  "address", "type" : "string" }],
 		      "response": {"name" : "success", "type" :  "int" }
 	      	  

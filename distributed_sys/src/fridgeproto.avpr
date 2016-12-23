@@ -109,5 +109,10 @@
 		      "response": {"name" : "success", "type" :  "int" }
 	      	  
 	      	  }
+	      	  ,"setcontrollerinfo" : {
+	      	  "request": [{"name" :  "port", "type" : "int" },{"name" :  "address", "type" : "string" }],
+		      "response": {"name" : "success", "type" :  "int" }
+	      	  
+	      	  }
  	 }
  }

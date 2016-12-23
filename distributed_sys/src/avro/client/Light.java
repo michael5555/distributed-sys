@@ -20,6 +20,7 @@ public class Light implements lightproto  {
 	private int id;
 	private String conaddress;
 	private String address;
+	private int controllerport = 5000;
 
 
 
@@ -58,6 +59,15 @@ public class Light implements lightproto  {
 			return 0;
 		}
 		return -1;
+	}
+	
+	@Override
+	public int setcontrollerinfo(int port, CharSequence address){
+		
+		conaddress = address.toString();
+		controllerport = port;
+		
+		return 0;
 	}
 
 	public static void main(String[] args) {
