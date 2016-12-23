@@ -68,7 +68,7 @@ public class Controller implements serverproto {
 		return this.port;
 	}
 	
-	public synchronized void run() {
+	public synchronized void update() {
 		for(int i  = 0; i < clients.size();i++){
 			try {
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(clients.get(i).getAddress().toString()),clients.get(i).getId()));
@@ -399,7 +399,7 @@ public class Controller implements serverproto {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                controller.run();
+                controller.update();
             }
         }, 0, 5000);
         

@@ -325,11 +325,12 @@ public class User extends Controller implements userproto,serverproto {
 			}
 		}
 		
-		for(Userinfo temp : users) {
+		for(int i = 0; i < users.size();i++) {
 			
-			if( temp.getId() == this.id) {
+			if( users.get(i).getId() == this.id) {
 				
-				users.remove(temp);
+				users.remove(i);
+				break;
 			}
 		}
 		
@@ -377,14 +378,28 @@ public class User extends Controller implements userproto,serverproto {
 			}
 
 		}
+		Server server2 = null;
+		try {
+
+			server2 = new SaslSocketServer(new SpecificResponder(serverproto.class, this), new InetSocketAddress(InetAddress.getByName(this.getAddress()),this.getConId()));
+			server2.start();
+		}catch(IOException e){}
 		
-        /*Timer timer = new Timer();
+        Timer timer = new Timer();
+
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                this.run();
+                update();
             }
-        }, 0, 5000);*/
+        }, 0, 5000);
+		
+		try {
+			server2.join();
+
+		} catch ( InterruptedException e) {}
+		
+
 	}
 
 	
@@ -666,7 +681,6 @@ public class User extends Controller implements userproto,serverproto {
 
 	public static void main(String[] args) {
 		Server server = null;
-		Server server2 = null;
 
 		try {
 			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(args[0]),5000));
@@ -678,10 +692,8 @@ public class User extends Controller implements userproto,serverproto {
 			client.close();
 
 			server = new SaslSocketServer(new SpecificResponder(userproto.class, Bob), new InetSocketAddress(InetAddress.getByName(Bob.getAddress()),Bob.getId()));
-			server2 = new SaslSocketServer(new SpecificResponder(serverproto.class, Bob), new InetSocketAddress(InetAddress.getByName(Bob.getAddress()),Bob.getConId()));
 
 			server.start();
-			server2.start();
 
 			
 	        Timer timer = new Timer();
@@ -700,7 +712,6 @@ public class User extends Controller implements userproto,serverproto {
 		}
 		try {
 			server.join();
-			server2.join();
 
 		}	catch ( InterruptedException e) { 
 			

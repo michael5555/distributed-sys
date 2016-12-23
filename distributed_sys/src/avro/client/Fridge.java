@@ -405,14 +405,29 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
 			}
 
 		}
+		Server server2 = null;
+		try {
+
+			server2 = new SaslSocketServer(new SpecificResponder(serverproto.class, this), new InetSocketAddress(InetAddress.getByName(this.getAddress()),this.getConId()));
+			server2.start();
+		}catch(IOException e){}
 		
-        /*Timer timer = new Timer();
+        Timer timer = new Timer();
+    	System.out.println("timercheck");
+
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                this.run();
+                update();
             }
-        }, 0, 5000);*/
+        }, 0, 5000);
+        
+		try {
+			server2.join();
+
+		} catch ( InterruptedException e) {}
+
+
 	}
 	
 	@Override
@@ -426,7 +441,6 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
 
 	public static void main(String[] args) {
 		Server server = null;
-		Server server2 = null;
 
 		
 		try {
@@ -437,10 +451,8 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
 			Fridge kastje = new Fridge(id,args[0],args[1]);
 			
 			server = new SaslSocketServer(new SpecificResponder(fridgeproto.class, kastje), new InetSocketAddress(InetAddress.getByName(kastje.getAddress()),kastje.getId()));
-			server2 = new SaslSocketServer(new SpecificResponder(serverproto.class, kastje), new InetSocketAddress(InetAddress.getByName(kastje.getAddress()),kastje.getConId()));
 
 			server.start();
-			server2.start();
 			
 	        Timer timer = new Timer();
 	        timer.schedule(new TimerTask() {
@@ -456,7 +468,6 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
 		}
 		try {
 			server.join();
-			server2.join();
 
 		} catch ( InterruptedException e) {
 			
