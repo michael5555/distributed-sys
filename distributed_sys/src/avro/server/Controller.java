@@ -347,6 +347,7 @@ public class Controller implements serverproto {
 	
 	@Override
 	public synchronized int deleteClient(int id) {
+		//need to change remove to remove by int id
 		for(Clientinfo temp : clients){
 			if (id == temp.getId()){
 				if( temp.getType().toString().equals("User")) {
