@@ -14,6 +14,7 @@ import org.apache.avro.ipc.specific.SpecificResponder;
 import avro.proto.serverproto;
 import avro.proto.lightproto;
 
+
 public class Light implements lightproto  {
 	
 	private Boolean state;
@@ -21,7 +22,6 @@ public class Light implements lightproto  {
 	private String conaddress;
 	private String address;
 	private int controllerport = 5000;
-
 
 
 	public Light(int id,String conaddr, String addr) {
@@ -39,7 +39,7 @@ public class Light implements lightproto  {
 		return address;
 	}
 	
-	public int getId(){
+	public int getId() {
 		return this.id;
 	}
 	
@@ -47,13 +47,13 @@ public class Light implements lightproto  {
 		return state;
 	}
 	
-	public int changeStatus(int id, boolean lightstatus){
-		if(id == this.id){
+	public int changeStatus(int id, boolean lightstatus) {
+		if (id == this.id) {
 			this.state = lightstatus;
-			if(this.state){
+			if (this.state) {
 				System.out.println("light with id: " + this.id + " has been turned on");
 			}
-			else{
+			else {
 				System.out.println("light with id: " + this.id + " has been turned off");
 			}
 			return 0;
@@ -62,11 +62,9 @@ public class Light implements lightproto  {
 	}
 	
 	@Override
-	public int setcontrollerinfo(int port, CharSequence address){
-		
+	public int setcontrollerinfo(int port, CharSequence address) {
 		conaddress = address.toString();
 		controllerport = port;
-		
 		return 0;
 	}
 
@@ -82,7 +80,7 @@ public class Light implements lightproto  {
 			
 			server = new SaslSocketServer(new SpecificResponder(lightproto.class, lampje), new InetSocketAddress(InetAddress.getByName(lampje.getAddress()),lampje.getId()));
 			server.start();
-		} catch(IOException e){
+		} catch(IOException e) {
 			System.err.println("Error connecting to server ...");
 			e.printStackTrace(System.err);
 			System.exit(1);
@@ -90,9 +88,8 @@ public class Light implements lightproto  {
 		
 		try {
 			server.join();
-
-		}	catch ( Exception e) {
-			
+		}	catch (Exception e) {
+			//TODO
 		}
 	}
 }

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.avro.ipc.SaslSocketServer;
 import org.apache.avro.ipc.SaslSocketTransceiver;
@@ -17,8 +19,7 @@ import avro.proto.userproto;
 import avro.proto.tsproto;
 
 
-import java.util.Timer;
-import java.util.TimerTask;
+
 
 public class TemperatureSensor implements tsproto  {
 	
@@ -53,16 +54,16 @@ public class TemperatureSensor implements tsproto  {
 		return measurement;
 	}
 	
-	public int getId(){
+	public int getId() {
 		return this.id;
 	}
 	
 	double nextMeasurement() {
 		double newmeasure = gen.nextGaussian();
-		if(newmeasure > 1){
+		if (newmeasure > 1) {
 			newmeasure = 1;
 		}
-		else if (newmeasure < -1){
+		else if (newmeasure < -1) {
 			newmeasure = -1;
 		}
 		measurement = measurement + newmeasure;
@@ -71,15 +72,11 @@ public class TemperatureSensor implements tsproto  {
 	
 	@Override
 	public int setcontrollerinfo(int port, CharSequence address) {
-		
 		controllerport = port;
 		conaddress = address.toString();
-		
 		return 0;
 	}
 	
-
-
 	public static void main(String[] args) {
 		Server server = null;
 		try {
@@ -98,7 +95,7 @@ public class TemperatureSensor implements tsproto  {
 			System.out.println(s.getMeasurement());
 			timer.schedule(new TimerTask(){	
 				@Override
-				public void run(){
+				public void run() {
 					try {
 						Transceiver client2 = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(s.getControllerAddress()),s.getControllerPort()));
 						serverproto proxy2 =  (serverproto) SpecificRequestor.getClient(serverproto.class, client2);
@@ -106,18 +103,20 @@ public class TemperatureSensor implements tsproto  {
 						proxy2.sendTSMeasurement(s.nextMeasurement(),id);
 						client2.close();
 						System.out.println(s.getMeasurement());
-					}catch(IOException e){}
+					} catch (IOException e) {
+						//TODO
+					}
 				}
 			},0,10000);
-		} catch(IOException e){
+		} catch(IOException e) {
 			System.err.println("Error connecting to server ...");
 			e.printStackTrace(System.err);
 			System.exit(1);
 		}
 		try {
 			server.join();
-		} catch ( InterruptedException e) {
-			
+		} catch (InterruptedException e) {
+			//TODO
 		}
 	}
 }
