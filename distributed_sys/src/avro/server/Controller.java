@@ -437,28 +437,27 @@ public class Controller implements serverproto {
 	
 	@Override
 	public synchronized int deleteClient(int id) {
-		//need to change remove to remove by int id
-		for (Clientinfo temp : clients) {
-			if (id == temp.getId()) {
-				if (temp.getType().toString().equals("User")) {
-					for (Userinfo temp2 : users) {
-						if (id == temp2.getId()) {
+		for (int temp = 0;temp < clients.size(); temp++) {
+			if (id == clients.get(temp).getId()) {
+				if (clients.get(temp).getType().toString().equals("User")) {
+					for (int temp2 = 0; temp2 < users.size();temp2++) {
+						if (id == users.get(temp2).getId()) {
 							users.remove(temp2);
 							break;
 						}
 					}
 				}
-				else if (temp.getType().toString().equals("Light")) {
-					for (Lightinfo temp2 : lights) {
-						if (id == temp2.getId()) {
+				else if (clients.get(temp).getType().toString().equals("Light")) {
+					for (int temp2 = 0; temp2 < lights.size();temp2++) {
+						if (id == lights.get(temp2).getId()) {
 							lights.remove(temp2);
 							break;
 						}
 					}
 				}
-				else if (temp.getType().toString().equals("TS")) {
-					for (List<TSinfo> temp2 : measurements) {
-						if (id == temp2.get(0).getId()) {
+				else if (clients.get(temp).getType().toString().equals("TS")) {
+					for (int temp2 = 0; temp2 < measurements.size();temp2++) {
+						if (id == measurements.get(temp2).get(0).getId()) {
 							measurements.remove(temp2);
 							break;
 						}
