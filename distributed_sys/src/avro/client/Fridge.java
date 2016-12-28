@@ -116,7 +116,7 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
 					items.remove(item);
 					if (items.size() == 0) {
 						try {
-							Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(this.getControllerAddress()),5000));
+							Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(this.getControllerAddress()),controllerport));
 							serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 							proxy.FridgeEmptyMessage(this.id);
 						} catch (IOException e ){
