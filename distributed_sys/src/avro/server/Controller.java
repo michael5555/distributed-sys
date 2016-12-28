@@ -185,6 +185,32 @@ public class Controller implements serverproto {
 	}
 	
 	@Override
+	public synchronized int reconnect(CharSequence type2,CharSequence address, int id) throws AvroRemoteException {
+		
+		for(Clientinfo temp : clients){
+			
+			if(id == temp.getId()){
+				
+				return 0;
+			}
+		}
+		if (type2.toString().equals("User")) {
+			users.add(new Userinfo(id,true,address));
+		}
+		else if (type2.toString().equals("Light")) {
+			lights.add(new Lightinfo(id,false,address));
+		}
+		else if (type2.toString().equals("TS")) {
+			List<TSinfo> newlist = new ArrayList<TSinfo>();
+			newlist.add(new TSinfo(id,0.0,address));
+			measurements.add(newlist);
+		}
+		clients.add(new Clientinfo(id,type2,address));
+		System.out.println(" Client reconnected: " + type2 + " (number: " +  id + " )");
+		return 0;
+	}
+	
+	@Override
 	public List<Lightinfo> sendLights (int id) throws AvroRemoteException {
 		for (Userinfo temp : users) {
 			if (temp.getId() == id) {

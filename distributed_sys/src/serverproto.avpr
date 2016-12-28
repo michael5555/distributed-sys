@@ -69,6 +69,10 @@
 		    "connect": {
 		      "request": [{"name" :  "type2", "type" : "string"},{"name" :  "address", "type" : "string"}],
 		      "response": "int"
+		      },
+		      "reconnect": {
+		      "request": [{"name" :  "type2", "type" : "string"},{"name" :  "address", "type" : "string"},{"name" :  "id", "type" : "int"}],
+		      "response": "int"
 		      }
 		      ,"resyncClients" : {
 	      	  "request": [{"name" :  "clients", "type" : {"type" : "array", "items" :  "Clientinfo" }}],

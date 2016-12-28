@@ -66,6 +66,9 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
 	public String getAddress() {
 		return this.address;
 	}
+	public int getControllerPort() {
+		return this.controllerport;
+	}
 	
 	public void checkuser() {
 		if (connected.getId() != 0) {
@@ -398,61 +401,6 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
             }
         }, 0, 5000);
         
-        /*Timer timer2 = new Timer();
-
-        timer2.schedule(new TimerTask() {
-            @Override
-            public void run() {
-            	try {
-            		Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(conaddress.toString()),controllerport));
-            		for(Clientinfo temp : clients) {
-            			
-            			if(temp.getType().toString().equals("User")) {
-            				try{
-
-            					Transceiver client2 = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(temp.getAddress().toString()),temp.getId()));
-            					userproto proxy = (userproto) SpecificRequestor.getClient(userproto.class, client2);
-            					proxy.setcontrollerinfo(controllerport, conaddress);
-            				}catch(IOException e) {}
-
-            				
-            			}
-            			else if(temp.getType().toString().equals("Light")) {
-            				try{
-
-            					Transceiver client2 = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(temp.getAddress().toString()),temp.getId()));
-            					lightproto proxy = (lightproto) SpecificRequestor.getClient(lightproto.class, client2);
-            					proxy.setcontrollerinfo(controllerport, conaddress);
-            				}catch(IOException e) {}
-
-            				
-            			}
-            			else if(temp.getType().toString().equals("Fridge")) {
-            				try{
-
-            					Transceiver client2 = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(temp.getAddress().toString()),temp.getId()));
-            					fridgeproto proxy = (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client2);
-            					proxy.setcontrollerinfo(controllerport, conaddress);
-            				}catch(IOException e) {}
-
-            				
-            			}
-            			else if(temp.getType().toString().equals("TS")) {
-            				try{
-
-            					Transceiver client2 = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(temp.getAddress().toString()),temp.getId()));
-            					tsproto proxy = (tsproto) SpecificRequestor.getClient(tsproto.class, client2);
-            					proxy.setcontrollerinfo(controllerport, conaddress);
-            				}catch(IOException e) {}
-
-            				
-            			}
-            		}
-            		clients.add(new Clientinfo(id,"User",address));
-
-            	}catch(IOException e){}
-            }
-        }, 0, 5000);*/
         
 		try {
 			server2.join();
@@ -486,6 +434,21 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
 	        	@Override
 	            public void run() {
 	                kastje.checkuser();
+	            }
+	        }, 0, 5000);
+	        
+	        Timer timer2 = new Timer();
+	        timer2.schedule(new TimerTask() {
+	        	@Override
+	            public void run() {
+	        		try{
+	        			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(kastje.getControllerAddress(),kastje.getControllerPort()));
+	        			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
+	        			proxy.reconnect("Fridge", kastje.getAddress(), kastje.getId());
+	        		}catch(IOException e){
+	        			kastje.sendElection();
+	        		}
+
 	            }
 	        }, 0, 5000);
 		} catch(IOException e){

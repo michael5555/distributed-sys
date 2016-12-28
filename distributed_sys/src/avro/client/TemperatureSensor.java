@@ -108,6 +108,19 @@ public class TemperatureSensor implements tsproto  {
 					}
 				}
 			},0,10000);
+			
+	        Timer timer2 = new Timer();
+	        timer2.schedule(new TimerTask() {
+	        	@Override
+	            public void run() {
+	        		try{
+	        			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(s.getControllerAddress(),s.getControllerPort()));
+	        			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
+	        			proxy.reconnect("TS", s.getAddress(), s.getId());
+	        		}catch(IOException e){}
+
+	            }
+	        }, 0, 5000);
 		} catch(IOException e) {
 			System.err.println("Error connecting to server ...");
 			e.printStackTrace(System.err);

@@ -67,7 +67,9 @@ public class User extends Controller implements userproto,serverproto {
 	public String getAddress() {
 		return this.address;
 	}
-	
+	public int getControllerPort() {
+		return this.controllerport;
+	}
 	public void checkfridge() {
 		if (!fridge.getId().equals(0)) {
 			try{
@@ -667,6 +669,21 @@ public class User extends Controller implements userproto,serverproto {
 	            @Override
 	            public void run() {
 	                Bob.checkfridge();
+	            }
+	        }, 0, 5000);
+	        
+	        Timer timer2 = new Timer();
+	        timer2.schedule(new TimerTask() {
+	        	@Override
+	            public void run() {
+	        		try{
+	        			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(Bob.getControllerAddress(),Bob.getControllerPort()));
+	        			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
+	        			proxy.reconnect("User", Bob.getAddress(), Bob.getId());
+	        		}catch(IOException e){
+	        			Bob.sendElection();
+	        		}
+
 	            }
 	        }, 0, 5000);
 			ShellFactory.createConsoleShell("user", "", Bob).commandLoop();
