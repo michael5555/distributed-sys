@@ -280,6 +280,7 @@ public class User extends Controller implements userproto,serverproto {
 		
 		int next = getNextIdAndType();
 		
+		
 		String type = clients.get(next).getType().toString();
 		
 		if (id != this.id){
