@@ -690,25 +690,13 @@ public class User extends Controller implements userproto,serverproto {
 	            }
 	        }, 0, 5000);
 	        
-	        /*Timer timer2 = new Timer();
+	        Timer timer2 = new Timer();
 	        timer2.schedule(new TimerTask() {
 	        	@Override
 	            public void run() {
-<<<<<<< HEAD
 	        		Bob.checkcontroller();
-=======
-	        		try{
-	        			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(Bob.getControllerAddress(),Bob.getControllerPort()));
-	        			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
-	        			proxy.reconnect("User", Bob.getAddress(), Bob.getId());
-	        			client.close();
-	        		}catch(IOException e){
-	        			Bob.sendElection();
-	        		}
-
->>>>>>> origin/master
 	            }
-	        }, 0, 5000);*/
+	        }, 0, 5000);
 			ShellFactory.createConsoleShell("user", "", Bob).commandLoop();
 			System.exit(1);
 		} catch (IOException e) {
