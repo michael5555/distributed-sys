@@ -450,13 +450,26 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
 	            }
 	        }, 0, 5000);
 	        
-	        Timer timer2 = new Timer();
+	        /*Timer timer2 = new Timer();
 	        timer2.schedule(new TimerTask() {
 	        	@Override
 	            public void run() {
+<<<<<<< HEAD
 	        		kastje.checkcontroller();
+=======
+	        		try{
+	        			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(kastje.getControllerAddress(),kastje.getControllerPort()));
+	        			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
+	        			proxy.reconnect("Fridge", kastje.getAddress(), kastje.getId());
+	        			client.close();
+
+	        		}catch(IOException e){
+	        			kastje.sendElection();
+	        		}
+
+>>>>>>> origin/master
 	            }
-	        }, 0, 5000);
+	        }, 0, 5000);*/
 		} catch(IOException e){
 			System.err.println("Error connecting to server ...");
 			e.printStackTrace(System.err);

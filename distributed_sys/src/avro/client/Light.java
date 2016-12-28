@@ -96,13 +96,24 @@ public class Light implements lightproto  {
 			server = new SaslSocketServer(new SpecificResponder(lightproto.class, lampje), new InetSocketAddress(InetAddress.getByName(lampje.getAddress()),lampje.getId()));
 			server.start();
 			
-	        Timer timer2 = new Timer();
+	        /*Timer timer2 = new Timer();
 	        timer2.schedule(new TimerTask() {
 	        	@Override
 	            public void run() {
+<<<<<<< HEAD
 	        		lampje.checkcontroller();
+=======
+	        		try{
+	        			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(lampje.getControllerAddress(),lampje.getControllerPort()));
+	        			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
+	        			proxy.reconnect("TS", lampje.getAddress(), lampje.getId());
+	        			client.close();
+
+	        		}catch(IOException e){}
+
+>>>>>>> origin/master
 	            }
-	        }, 0, 5000);
+	        }, 0, 5000);*/
 		} catch(IOException e) {
 			System.err.println("Error connecting to server ...");
 			e.printStackTrace(System.err);
