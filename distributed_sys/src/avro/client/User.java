@@ -66,7 +66,7 @@ public class User extends Controller implements userproto,serverproto {
 	}
 	
 	public void checkfridge() {
-		if (fridge.getId() != 0) {
+		if (!fridge.getId().equals(0)) {
 			try{
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(fridge.getAddress().toString()),fridge.getId()));
 			} catch (IOException e) {
@@ -400,7 +400,7 @@ public class User extends Controller implements userproto,serverproto {
 			System.out.println("You are away from home. Go home to access the controller.");
 			return;
 		}
-		if (fridge.getId() == 0) {
+		if (fridge.getId().equals(0)) {
 			try {
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(this.getControllerAddress()),controllerport));
 				serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
@@ -428,7 +428,7 @@ public class User extends Controller implements userproto,serverproto {
 			System.out.println("You are away from home. Go home to access the controller.");
 			return;
 		}
-		if (fridge.getId() == 0) {
+		if (fridge.getId().equals(0)) {
 			try {
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(this.getControllerAddress()),controllerport));
 				serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
@@ -452,7 +452,7 @@ public class User extends Controller implements userproto,serverproto {
 			System.out.println("You are away from home. Go home to access the controller.");
 			return;
 		}
-		if (fridge.getId() == 0) {
+		if (fridge.getId().equals(0)) {
 			try {
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(this.getControllerAddress()),controllerport));
 				serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
@@ -469,7 +469,7 @@ public class User extends Controller implements userproto,serverproto {
 	
 	@Command
 	public void changeHomeStatus() {
-		if (fridge.getId() == 0) {
+		if (fridge.getId().equals(0)) {
 			try {
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(this.getControllerAddress()),controllerport));
 				serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
@@ -491,7 +491,7 @@ public class User extends Controller implements userproto,serverproto {
 			System.out.println("You are away from home. Go home to access the controller.");
 			return;
 		}
-		if (fridge.getId() == 0) {
+		if (fridge.getId().equals(0)) {
 			try {
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(this.getControllerAddress()),controllerport));
 				serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
@@ -518,7 +518,7 @@ public class User extends Controller implements userproto,serverproto {
 			System.out.println("You are away from home. Go home to access the controller.");
 			return;
 		}
-		if (fridge.getId() == 0) {
+		if (fridge.getId().equals(0)) {
 			try {
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(this.getControllerAddress()),controllerport));
 				serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
@@ -540,7 +540,7 @@ public class User extends Controller implements userproto,serverproto {
 			System.out.println("You are away from home. Go home to access the controller.");
 			return;
 		}
-		if (fridge.getId() == 0) {
+		if (fridge.getId().equals(0)) {
 			try {
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(this.getControllerAddress()),controllerport));
 				serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
@@ -565,7 +565,7 @@ public class User extends Controller implements userproto,serverproto {
 			System.out.println("You are away from home. Go home to access the controller.");
 			return;
 		}
-		if (fridge.getId() == 0) {
+		if (fridge.getId().equals(0)) {
 			try {
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(this.getControllerAddress()),controllerport));
 				serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
@@ -596,7 +596,7 @@ public class User extends Controller implements userproto,serverproto {
 			System.out.println("You are away from home. Go home to access the controller.");
 			return;
 		}
-		if (fridge.getId() != 0) {
+		if (!fridge.getId().equals(0)) {
 			try {
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(fridge.getAddress().toString()),id));
 				fridgeproto proxy = (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client);
@@ -619,7 +619,7 @@ public class User extends Controller implements userproto,serverproto {
 			System.out.println("You are away from home. Go home to access the controller.");
 			return;
 		}
-		if (fridge.getId() != 0) {
+		if (!fridge.getId().equals(0)) {
 			try {
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(fridge.getAddress().toString()),id));
 				fridgeproto proxy = (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client);
@@ -646,7 +646,7 @@ public class User extends Controller implements userproto,serverproto {
 			System.out.println("You are away from home. Go home to access the controller.");
 			return;
 		}
-		if (fridge.getId() != 0) {
+		if (!fridge.getId().equals(0)) {
 			try {
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(fridge.getAddress().toString()),id));
 				fridgeproto proxy = (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client);
