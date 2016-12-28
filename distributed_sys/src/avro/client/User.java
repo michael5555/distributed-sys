@@ -20,14 +20,15 @@ import avro.proto.serverproto;
 import avro.proto.userproto;
 import avro.proto.tsproto;
 import avro.proto.Fridgestate;
-import avro.proto.userserverproto;
 import avro.proto.Lightinfo;
 import avro.proto.TSinfo;
 import avro.proto.Userinfo;
+import avro.proto.Controllerinfo;
 import avro.proto.Clientinfo;
 import avro.proto.Fridgeinfo;
 import avro.proto.lightproto;
 import avro.proto.fridgeproto;
+
 import avro.server.Controller;
 
 import asg.cliche.*;
@@ -43,10 +44,12 @@ public class User extends Controller implements userproto,serverproto {
 	private boolean participant = false;
 	private boolean athome;
 	private int controllerport = 5000;
+	private Controllerinfo oldcontroller;
 
 	
 	User(int id, String username, String conaddr,String addr) {
 		super(conaddr);
+		this.oldcontroller =  new Controllerinfo(5000,conaddr);
 		this.address = addr;
 		this.id = id;
 		this.conid = id - 2000;
@@ -237,12 +240,7 @@ public class User extends Controller implements userproto,serverproto {
 	
 	@Override
 	public int elected(int id) {
-		int next = getNextIdAndType();
-<<<<<<< HEAD
-		
-		
-=======
->>>>>>> 92aaedc50a68db314c4c28eb1869fbf021a1be73
+		int next = getNextIdAndType();		
 		String type = clients.get(next).getType().toString();
 		if (id != this.id) {
 			participant = false;
@@ -331,65 +329,30 @@ public class User extends Controller implements userproto,serverproto {
             @Override
             public void run() {
                 update();
+                if(pollOldController(oldcontroller) == 0){
+                	
+            		clients.add(new Clientinfo(id,"User",address));
+            		users.add(new Userinfo(id,true,address));
+            		
+            		try{
+            			
+    					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(oldcontroller.getAddress().toString()),oldcontroller.getId()));
+    					serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
+    					proxy.resyncClients(clients);
+    					proxy.resyncUsers(users);
+    					proxy.resyncLights(lights);
+    					proxy.resyncMeasurements(measurements);
+
+    					
+
+            		}catch(IOException e) {}
+            		
+            		timer.cancel();
+            		
+                }
             }
         }, 0, 5000);
         
-        /* Timer timer2 = new Timer();
-
-        timer2.schedule(new TimerTask() {
-            @Override
-            public void run() {
-            	try {
-            		Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(conaddress.toString()),controllerport));
-            		for(Clientinfo temp : clients) {
-            			
-            			if(temp.getType().toString().equals("User")) {
-            				try{
-
-            					Transceiver client2 = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(temp.getAddress().toString()),temp.getId()));
-            					userproto proxy = (userproto) SpecificRequestor.getClient(userproto.class, client2);
-            					proxy.setcontrollerinfo(controllerport, conaddress);
-            				}catch(IOException e) {}
-
-            				
-            			}
-            			else if(temp.getType().toString().equals("Light")) {
-            				try{
-
-            					Transceiver client2 = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(temp.getAddress().toString()),temp.getId()));
-            					lightproto proxy = (lightproto) SpecificRequestor.getClient(lightproto.class, client2);
-            					proxy.setcontrollerinfo(controllerport, conaddress);
-            				}catch(IOException e) {}
-
-            				
-            			}
-            			else if(temp.getType().toString().equals("Fridge")) {
-            				try{
-
-            					Transceiver client2 = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(temp.getAddress().toString()),temp.getId()));
-            					fridgeproto proxy = (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client2);
-            					proxy.setcontrollerinfo(controllerport, conaddress);
-            				}catch(IOException e) {}
-
-            				
-            			}
-            			else if(temp.getType().toString().equals("TS")) {
-            				try{
-
-            					Transceiver client2 = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(temp.getAddress().toString()),temp.getId()));
-            					tsproto proxy = (tsproto) SpecificRequestor.getClient(tsproto.class, client2);
-            					proxy.setcontrollerinfo(controllerport, conaddress);
-            				}catch(IOException e) {}
-
-            				
-            			}
-            		}
-            		clients.add(new Clientinfo(id,"User",address));
-            		users.add(new Userinfo(id,true,address));
-
-            	}catch(IOException e){}
-            }
-        }, 0, 5000); */
         
 		try {
 			server2.join();

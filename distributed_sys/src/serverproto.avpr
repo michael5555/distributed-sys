@@ -50,6 +50,14 @@
 	  		
 	  		
 	  		
+	  		 ] },
+	  	{ "name" : "Controllerinfo", "type" : "record" , "fields" : [
+	  
+	  		{ "name" : "id",  "type" : "int" },
+	  		{ "name" : "address", "type" : "string" }
+	  		
+	  		
+	  		
 	  		 ] }
 	  		 
 
@@ -62,7 +70,26 @@
 		      "request": [{"name" :  "type2", "type" : "string"},{"name" :  "address", "type" : "string"}],
 		      "response": "int"
 		      }
-
+		      ,"resyncClients" : {
+	      	  "request": [{"name" :  "clients", "type" : {"type" : "array", "items" :  "Clientinfo" }}],
+		      "response": {"name" : "success", "type" :  "int" }
+	      	  
+	      	  }
+	      	  ,"resyncUsers" : {
+	      	  "request": [{"name" :  "users", "type" : {"type" : "array", "items" :  "Userinfo" }}],
+		      "response": {"name" : "success", "type" :  "int" }
+	      	  
+	      	  }
+	      	  ,"resyncLights" : {
+	      	  "request": [{"name" :  "lights", "type" : {"type" : "array", "items" :  "Lightinfo" }}],
+		      "response": {"name" : "success", "type" :  "int" }
+	      	  
+	      	  }
+	      	  ,"resyncMeasurements" : {
+	      	  "request": [{"name" :  "measurements", "type" : {"type" : "array", "items" :  {"type" : "array", "items" :  "TSinfo" } }}],
+		      "response": {"name" : "success", "type" :  "int" }
+	      	  
+	      	  }
 		     ,"sendLights": {
 		      "request": [{"name" : "id",  "type" :  "int" }],
 		      "response": {"type" : "array", "items" :  "Lightinfo" } 

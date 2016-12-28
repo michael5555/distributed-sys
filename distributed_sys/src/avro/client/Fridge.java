@@ -20,12 +20,12 @@ import avro.proto.serverproto;
 import avro.proto.tsproto;
 import avro.proto.userproto;
 import avro.proto.Clientinfo;
+import avro.proto.Controllerinfo;
 import avro.proto.Lightinfo;
 import avro.proto.TSinfo;
 import avro.proto.Userinfo;
 import avro.proto.fridgeproto;
 import avro.proto.lightproto;
-import avro.proto.fridgeserverproto;
 import avro.server.Controller;
 
 
@@ -40,10 +40,13 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
 	private String address;
 	private boolean participant = false;
 	private int controllerport = 5000;
+	private Controllerinfo oldcontroller;
 
 	
 	public Fridge(int id, String conaddr, String addr) {
 		super(conaddr);
+		this.oldcontroller =  new Controllerinfo(5000,conaddr);
+
 		this.address = addr;
 		items = new ArrayList<CharSequence>();
 		this.id = id;
@@ -369,6 +372,29 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
             @Override
             public void run() {
                 update();
+                if(pollOldController(oldcontroller) == 0){
+                	
+            		clients.add(new Clientinfo(id,"Fridge",address));
+            		
+            		System.out.println("Old controller has reconnected.");
+            		
+            		try{
+            			
+            			
+            			
+    					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(oldcontroller.getAddress().toString()),oldcontroller.getId()));
+    					serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
+    					proxy.resyncClients(clients);
+    					proxy.resyncUsers(users);
+    					proxy.resyncLights(lights);
+    					proxy.resyncMeasurements(measurements);
+
+    					
+
+            		}catch(IOException e) {}
+            		
+            		timer.cancel();
+                }
             }
         }, 0, 5000);
         
