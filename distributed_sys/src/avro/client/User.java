@@ -80,6 +80,18 @@ public class User extends Controller implements userproto,serverproto {
 			}
 		}
 	}
+	public synchronized void checkcontroller(){
+		if (controllerport != this.conid) {
+			try{
+				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(conaddress,controllerport));
+				serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
+				proxy.reconnect("User", address, id);
+				client.close();
+			}catch(IOException e){
+				sendElection();
+			}
+		}
+	}
 	
 	@Override
 	public int reportUserStatus(int id, boolean athome) {
@@ -268,18 +280,7 @@ public class User extends Controller implements userproto,serverproto {
 	}
 	
 	public void ControllerHandOff() {
-		for (int i = 0; i < clients.size();i++) {
-			if (clients.get(i).getId() == this.id) {
-				clients.remove(i);
-				break;
-			}
-		}
-		for (int i = 0; i < users.size();i++) {
-			if (users.get(i).getId() == this.id) {
-				users.remove(i);
-				break;
-			}
-		}
+
 		for (Clientinfo temp : clients) {
 			if (temp.getType().toString().equals("User")) {
 				try {
@@ -318,6 +319,20 @@ public class User extends Controller implements userproto,serverproto {
 				}
 			}
 		}
+		
+		for (int i = 0; i < clients.size();i++) {
+			if (clients.get(i).getId() == this.id) {
+				clients.remove(i);
+				break;
+			}
+		}
+		for (int i = 0; i < users.size();i++) {
+			if (users.get(i).getId() == this.id) {
+				users.remove(i);
+				break;
+			}
+		}
+		
 		Server server2 = null;
 		try {
 			server2 = new SaslSocketServer(new SpecificResponder(serverproto.class, this), new InetSocketAddress(InetAddress.getByName(this.getAddress()),this.getConId()));
@@ -676,14 +691,7 @@ public class User extends Controller implements userproto,serverproto {
 	        timer2.schedule(new TimerTask() {
 	        	@Override
 	            public void run() {
-	        		try{
-	        			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(Bob.getControllerAddress(),Bob.getControllerPort()));
-	        			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
-	        			proxy.reconnect("User", Bob.getAddress(), Bob.getId());
-	        		}catch(IOException e){
-	        			Bob.sendElection();
-	        		}
-
+	        		Bob.checkcontroller();
 	            }
 	        }, 0, 5000);
 			ShellFactory.createConsoleShell("user", "", Bob).commandLoop();

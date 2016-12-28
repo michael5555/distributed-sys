@@ -38,6 +38,15 @@ public class TemperatureSensor implements tsproto  {
 		measurement = gen.nextGaussian() + 20;
 	}
 	
+	public synchronized void checkcontroller(){
+		try{
+			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(conaddress,controllerport));
+			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
+			proxy.reconnect("TS", address, id);
+			client.close();
+		}catch(IOException e){}
+	}
+	
 	public String getControllerAddress() {
 		return conaddress;
 	}
@@ -113,11 +122,7 @@ public class TemperatureSensor implements tsproto  {
 	        timer2.schedule(new TimerTask() {
 	        	@Override
 	            public void run() {
-	        		try{
-	        			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(s.getControllerAddress(),s.getControllerPort()));
-	        			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
-	        			proxy.reconnect("TS", s.getAddress(), s.getId());
-	        		}catch(IOException e){}
+	        		s.checkcontroller();
 
 	            }
 	        }, 0, 5000);

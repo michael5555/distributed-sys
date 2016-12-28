@@ -82,6 +82,19 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
 		}	
 	}
 	
+	public synchronized void checkcontroller(){
+		if (controllerport != this.conid) {
+			try{
+				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(conaddress,controllerport));
+				serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
+				proxy.reconnect("Fridge", address, id);
+				client.close();
+			}catch(IOException e){
+				sendElection();
+			}
+		}
+	}
+	
 	public List<CharSequence> getItems() {
 		return items;
 	}
@@ -441,14 +454,7 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
 	        timer2.schedule(new TimerTask() {
 	        	@Override
 	            public void run() {
-	        		try{
-	        			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(kastje.getControllerAddress(),kastje.getControllerPort()));
-	        			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
-	        			proxy.reconnect("Fridge", kastje.getAddress(), kastje.getId());
-	        		}catch(IOException e){
-	        			kastje.sendElection();
-	        		}
-
+	        		kastje.checkcontroller();
 	            }
 	        }, 0, 5000);
 		} catch(IOException e){

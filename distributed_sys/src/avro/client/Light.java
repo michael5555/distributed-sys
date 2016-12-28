@@ -33,6 +33,15 @@ public class Light implements lightproto  {
 		this.id = id;
 	}
 	
+	public synchronized void checkcontroller(){
+		try{
+			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(conaddress,controllerport));
+			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
+			proxy.reconnect("Light", address, id);
+			client.close();
+		}catch(IOException e){}
+	}
+	
 	public String getControllerAddress() {
 		return conaddress;
 	}
@@ -91,12 +100,7 @@ public class Light implements lightproto  {
 	        timer2.schedule(new TimerTask() {
 	        	@Override
 	            public void run() {
-	        		try{
-	        			Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(lampje.getControllerAddress(),lampje.getControllerPort()));
-	        			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
-	        			proxy.reconnect("TS", lampje.getAddress(), lampje.getId());
-	        		}catch(IOException e){}
-
+	        		lampje.checkcontroller();
 	            }
 	        }, 0, 5000);
 		} catch(IOException e) {
