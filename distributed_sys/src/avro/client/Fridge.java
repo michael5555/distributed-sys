@@ -330,12 +330,6 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
 	}
 	
 	public void ControllerHandOff() {
-		for(int i = 0; i < clients.size();i++) {
-			if (clients.get(i).getId() == this.id) {
-				clients.remove(i);
-				break;
-			}
-		}
 		for (Clientinfo temp : clients) {
 			if (temp.getType().toString().equals("User")) {
 				try {
@@ -372,6 +366,13 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
 				} catch (IOException e) {
 					//TODO
 				}
+			}
+		}
+		
+		for(int i = 0; i < clients.size();i++) {
+			if (clients.get(i).getId() == this.id) {
+				clients.remove(i);
+				break;
 			}
 		}
 		
