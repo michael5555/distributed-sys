@@ -94,11 +94,13 @@ public class TemperatureSensor implements tsproto  {
 			
 			int id = proxy.connect("TS",args[1]);
 			TemperatureSensor s = new TemperatureSensor(id,args[0],args[1]);
-			
-			client.close();
-			
+
 			server = new SaslSocketServer(new SpecificResponder(userproto.class, s), new InetSocketAddress(InetAddress.getByName(s.getAddress()),s.getId()));
 			server.start();
+			
+			proxy.update();
+
+			client.close();
 
 			Timer timer = new Timer();
 			System.out.println(s.getMeasurement());

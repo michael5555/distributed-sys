@@ -60,7 +60,8 @@ public class Controller implements serverproto {
 		return this.port;
 	}
 	
-	public synchronized void update() {
+	@Override
+	public synchronized int update() {
 		for (int i  = 0; i < clients.size();i++) {
 			try {
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(clients.get(i).getAddress().toString()),clients.get(i).getId()));
@@ -83,6 +84,7 @@ public class Controller implements serverproto {
 				i--;
 			}	
 		}
+		return 0;
 	}
 	
 	@Override

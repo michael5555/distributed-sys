@@ -90,12 +90,15 @@ public class Light implements lightproto  {
 			serverproto proxy =  (serverproto) SpecificRequestor.getClient(serverproto.class, client);
 			
 			int id = proxy.connect("Light",args[1]);
-			client.close();
 			Light lampje = new Light(id,args[0],args[1]);
 			
 			server = new SaslSocketServer(new SpecificResponder(lightproto.class, lampje), new InetSocketAddress(InetAddress.getByName(lampje.getAddress()),lampje.getId()));
 			server.start();
 			
+			proxy.update();
+			
+			client.close();
+
 	        Timer timer2 = new Timer();
 	        timer2.schedule(new TimerTask() {
 	        	@Override

@@ -442,6 +442,10 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
 			server = new SaslSocketServer(new SpecificResponder(fridgeproto.class, kastje), new InetSocketAddress(InetAddress.getByName(kastje.getAddress()),kastje.getId()));
 			server.start();
 			
+			proxy.update();
+
+			client.close();
+			
 	        Timer timer = new Timer();
 	        timer.schedule(new TimerTask() {
 	        	@Override

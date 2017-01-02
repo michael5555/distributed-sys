@@ -677,10 +677,12 @@ public class User extends Controller implements userproto,serverproto {
 			int id = proxy.connect("User",args[1]);
 			User Bob = new User(id,"Bobby", args[0],args[1]);
 
-			client.close();
-
 			server = new SaslSocketServer(new SpecificResponder(userproto.class, Bob), new InetSocketAddress(InetAddress.getByName(Bob.getAddress()),Bob.getId()));
 			server.start();
+			
+			proxy.update();
+
+			client.close();
 
 	        Timer timer = new Timer();
 	        timer.schedule(new TimerTask() {
