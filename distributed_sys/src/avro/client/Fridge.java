@@ -74,6 +74,7 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
 		if (connected.getId() != 0) {
 			try {
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(connected.getAddress().toString()),connected.getId()));
+				client.close();
 			} catch (IOException e) {
 				open = false;
 				System.out.println("Connection to user with id " + connected.getId() + " lost");
@@ -217,7 +218,7 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
 							CallFuture<Integer> future = new CallFuture<Integer>();
 							proxy.election(id, future);
 						} catch (IOException e) {
-							//TODO
+							
 						}
 				     }
 				});  
@@ -231,14 +232,14 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
 							CallFuture<Integer> future = new CallFuture<Integer>();
 							proxy.election(id, future);
 						} catch (IOException e) {
-							//TODO
+							
 						}
 				     }
 				});  
 				t1.start();
 			}
 		}catch(IOException e){
-			//TODO
+			
 		}
 	}
 	
@@ -253,7 +254,7 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
 							CallFuture<Integer> future = new CallFuture<Integer>();
 							proxy.elected(id, future);
 						} catch (IOException e) {
-							//TODO
+							
 						}
 				     }
 				});  
@@ -267,14 +268,14 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
 							CallFuture<Integer> future = new CallFuture<Integer>();
 							proxy.elected(id, future);
 						} catch (IOException e) {
-							//TODO
+							
 						}
 				     }
 				});  
 				t1.start();	
 			}
 		}catch(IOException e){
-			//TODO
+			
 		}
 	}
 
@@ -337,7 +338,7 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
 					userproto proxy = (userproto) SpecificRequestor.getClient(userproto.class, client);
 					proxy.setcontrollerinfo(this.conid, this.address);
 				} catch (IOException e) {
-					//TODO
+					
 				}
 			}
 			else if (temp.getType().toString().equals("Light")) {
@@ -346,7 +347,7 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
 					lightproto proxy = (lightproto) SpecificRequestor.getClient(lightproto.class, client);
 					proxy.setcontrollerinfo(this.conid, this.address);
 				} catch (IOException e) {
-					//TODO
+					
 				}
 			}
 			else if (temp.getType().toString().equals("Fridge")) {
@@ -355,7 +356,7 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
 					fridgeproto proxy = (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client);
 					proxy.setcontrollerinfo(this.conid, this.address);
 				} catch(IOException e) {
-					//TODO
+					
 				}
 			}
 			else if (temp.getType().toString().equals("TS")) {
@@ -364,7 +365,7 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
 					tsproto proxy = (tsproto) SpecificRequestor.getClient(tsproto.class, client);
 					proxy.setcontrollerinfo(this.conid, this.address);
 				} catch (IOException e) {
-					//TODO
+					
 				}
 			}
 		}
@@ -381,7 +382,7 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
 			server2 = new SaslSocketServer(new SpecificResponder(serverproto.class, this), new InetSocketAddress(InetAddress.getByName(this.getAddress()),this.getConId()));
 			server2.start();
 		} catch (IOException e) {
-			//TODO
+			
 		}
 		
         Timer timer = new Timer();
@@ -419,7 +420,7 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
 		try {
 			server2.join();
 		} catch (InterruptedException e) {
-			//TODO
+			
 		}
 	}
 	
@@ -471,7 +472,7 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
 			server.join();
 
 		} catch (InterruptedException e) {
-			//TODO
+			
 		}
 	}
 }

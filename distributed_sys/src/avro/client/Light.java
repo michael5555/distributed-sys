@@ -64,6 +64,9 @@ public class Light implements lightproto  {
 	
 	public int changeStatus(int id, boolean lightstatus) {
 		if (id == this.id) {
+			if (this.state == lightstatus){
+				return 0;
+			}
 			this.state = lightstatus;
 			if (this.state) {
 				System.out.println("light with id: " + this.id + " has been turned on");
@@ -115,7 +118,7 @@ public class Light implements lightproto  {
 		try {
 			server.join();
 		}	catch (Exception e) {
-			//TODO
+			
 		}
 	}
 }

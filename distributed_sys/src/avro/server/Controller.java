@@ -413,7 +413,7 @@ public class Controller implements serverproto {
 					client.close();
 					return new Fridgestate(i,addr);
 				} catch (IOException e) {
-					//TODO
+					
 				}
 			}
 		}
@@ -496,7 +496,7 @@ public class Controller implements serverproto {
 		try {
 			server.join();
 		}	catch (InterruptedException e) {
-			//TODO
+			
 		}
 	}
 }

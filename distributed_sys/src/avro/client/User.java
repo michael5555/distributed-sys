@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.apache.avro.AvroRemoteException;
 import org.apache.avro.ipc.SaslSocketServer;
 import org.apache.avro.ipc.SaslSocketTransceiver;
 import org.apache.avro.ipc.Server;
@@ -74,6 +73,7 @@ public class User extends Controller implements userproto,serverproto {
 		if (!fridge.getId().equals(0)) {
 			try{
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(fridge.getAddress().toString()),fridge.getId()));
+				client.close();
 			} catch (IOException e) {
 				fridge.setId(0);
 				System.out.println("Connection to fridge lost.");
@@ -165,7 +165,7 @@ public class User extends Controller implements userproto,serverproto {
 							CallFuture<Integer> future = new CallFuture<Integer>();
 							proxy.election(id, future);
 						} catch (IOException e) {
-							//TODO
+							
 						}
 				     }
 				});  
@@ -179,14 +179,14 @@ public class User extends Controller implements userproto,serverproto {
 							CallFuture<Integer> future = new CallFuture<Integer>();
 							proxy.election(id, future);
 						} catch (IOException e) {
-							//TODO
+							
 						}
 				     }
 				});  
 				t1.start();
 			}
 		} catch (IOException e) {
-			//TODO
+			
 		}
 	}
 	
@@ -201,7 +201,7 @@ public class User extends Controller implements userproto,serverproto {
 							CallFuture<Integer> future = new CallFuture<Integer>();
 							proxy.elected(id, future);
 						} catch (IOException e) {
-							//TODO
+							
 						}
 				     }
 				});  
@@ -215,14 +215,14 @@ public class User extends Controller implements userproto,serverproto {
 							CallFuture<Integer> future = new CallFuture<Integer>();
 							proxy.elected(id, future);
 						} catch (IOException e) {
-							//TODO
+							
 						}
 				     }
 				});  
 				t1.start();	
 			}
 		} catch (IOException e) {
-			//TODO
+			
 		}
 	}
 
@@ -280,6 +280,9 @@ public class User extends Controller implements userproto,serverproto {
 	}
 	
 	public void ControllerHandOff() {
+		if (!fridge.getId().equals(0)){
+			closeFridge();
+		}
 
 		for (Clientinfo temp : clients) {
 			if (temp.getType().toString().equals("User")) {
@@ -288,7 +291,7 @@ public class User extends Controller implements userproto,serverproto {
 					userproto proxy = (userproto) SpecificRequestor.getClient(userproto.class, client);
 					proxy.setcontrollerinfo(this.conid, this.address);
 				} catch (IOException e) {
-					//TODO
+					
 				}
 			}
 			else if (temp.getType().toString().equals("Light")) {
@@ -297,7 +300,7 @@ public class User extends Controller implements userproto,serverproto {
 					lightproto proxy = (lightproto) SpecificRequestor.getClient(lightproto.class, client);
 					proxy.setcontrollerinfo(this.conid, this.address);
 				} catch (IOException e) {
-					//TODO
+					
 				}
 			}
 			else if (temp.getType().toString().equals("Fridge")) {
@@ -306,7 +309,7 @@ public class User extends Controller implements userproto,serverproto {
 					fridgeproto proxy = (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client);
 					proxy.setcontrollerinfo(this.conid, this.address);
 				} catch (IOException e) {
-					//TODO
+					
 				}
 			}
 			else if (temp.getType().toString().equals("TS")) {
@@ -315,7 +318,7 @@ public class User extends Controller implements userproto,serverproto {
 					tsproto proxy = (tsproto) SpecificRequestor.getClient(tsproto.class, client);
 					proxy.setcontrollerinfo(this.conid, this.address);
 				} catch (IOException e) {
-					//TODO
+					
 				}
 			}
 		}
@@ -338,7 +341,7 @@ public class User extends Controller implements userproto,serverproto {
 			server2 = new SaslSocketServer(new SpecificResponder(serverproto.class, this), new InetSocketAddress(InetAddress.getByName(this.getAddress()),this.getConId()));
 			server2.start();
 		} catch (IOException e) {
-			//TODO
+			
 		}
 
         Timer timer = new Timer();
@@ -377,7 +380,7 @@ public class User extends Controller implements userproto,serverproto {
 		try {
 			server2.join();
 		} catch (InterruptedException e) {
-			//TODO
+			
 		}
 	}
 
@@ -579,21 +582,21 @@ public class User extends Controller implements userproto,serverproto {
 	}
 	
 	@Command
-	public void addItemtoFridge(int id,CharSequence item) {
+	public void addItemtoFridge(CharSequence item) {
 		if (!athome) {
 			System.out.println("You are away from home. Go home to access the controller.");
 			return;
 		}
 		if (!fridge.getId().equals(0)) {
 			try {
-				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(fridge.getAddress().toString()),id));
+				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(fridge.getAddress().toString()),fridge.getId()));
 				fridgeproto proxy = (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client);
-				if (proxy.addItem(id, item) == 0) {
-					System.out.println("Added item: " + item + " to fridge with id: "  + id);
+				if (proxy.addItem(fridge.getId(), item) == 0) {
+					System.out.println("Added item: " + item + " to fridge with id: "  + fridge.getId());
 				}
 				client.close();
 			} catch (IOException e) {
-				//TODO
+				
 			}
 		}
 		else {
@@ -602,25 +605,25 @@ public class User extends Controller implements userproto,serverproto {
 	}
 	
 	@Command
-	public void removeItemfromFridge(int id,CharSequence item) {
+	public void removeItemfromFridge(CharSequence item) {
 		if (!athome) {
 			System.out.println("You are away from home. Go home to access the controller.");
 			return;
 		}
 		if (!fridge.getId().equals(0)) {
 			try {
-				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(fridge.getAddress().toString()),id));
+				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(fridge.getAddress().toString()),fridge.getId()));
 				fridgeproto proxy = (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client);
 				int removed = proxy.removeItem(fridge.getId(), item);
 				if (removed == 0) {
-					System.out.println("removed item: " + item + " from fridge with id: "  + id);
+					System.out.println("removed item: " + item + " from fridge with id: "  + fridge.getId());
 				}
 				else {
 					System.out.println("The item " + item + " was not in the fridge");
 				}
 				client.close();
 			} catch (IOException e) {
-				//TODO
+				
 			}
 		}
 		else {
@@ -629,44 +632,29 @@ public class User extends Controller implements userproto,serverproto {
 	}
 	
 	@Command
-	public void closeFridge(int id) {
+	public void closeFridge() {
 		if (!athome) {
 			System.out.println("You are away from home. Go home to access the controller.");
 			return;
 		}
 		if (!fridge.getId().equals(0)) {
 			try {
-				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(fridge.getAddress().toString()),id));
+				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(fridge.getAddress().toString()),fridge.getId()));
 				fridgeproto proxy = (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client);
-				int status = proxy.closeFridge(id);
+				int status = proxy.closeFridge(fridge.getId());
 				if (status  == 0) {
-					System.out.println("fridge with id: "  + id +  " has been closed.");
+					System.out.println("fridge with id: "  + fridge.getId() +  " has been closed.");
 					fridge.setId(0);
 				}
 				client.close();
 			} catch (IOException e) {
-				//TODO
+				
 			}
 		}
 		else {
 			System.out.println("Right now you are connected to a controller.");
 		}
 	}
-	
-	@Command
-	public void printbackup() {
-		for (Clientinfo temp : clients) {
-			System.out.println("We have a client of type: " + temp.getType() + " with id: " +  temp.getId());
-		}
-		for (Lightinfo temp : lights) {
-			System.out.println("We have a light with id: " +  temp.getId());
-		}
-		for (Userinfo temp : users) {
-			System.out.println("We have a user with id: " +  temp.getId());
-		}
-		//TODO: Unfinished?
-	}
-
 
 	public static void main(String[] args) {
 		Server server = null;
@@ -709,7 +697,7 @@ public class User extends Controller implements userproto,serverproto {
 		try {
 			server.join();
 		} catch (InterruptedException e) { 
-			//TODO
+			
 		}
 	}
 }
