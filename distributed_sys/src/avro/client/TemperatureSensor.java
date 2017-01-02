@@ -114,9 +114,7 @@ public class TemperatureSensor implements tsproto  {
 						proxy2.sendTSMeasurement(s.nextMeasurement(),id);
 						client2.close();
 						System.out.println(s.getMeasurement());
-					} catch (IOException e) {
-						//TODO
-					}
+					} catch (IOException e) {}
 				}
 			},0,10000);
 			
@@ -134,8 +132,6 @@ public class TemperatureSensor implements tsproto  {
 		}
 		try {
 			server.join();
-		} catch (InterruptedException e) {
-			//TODO
-		}
+		} catch (InterruptedException e) {}
 	}
 }

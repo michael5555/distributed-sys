@@ -74,7 +74,6 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
 		if (connected.getId() != 0) {
 			try {
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(connected.getAddress().toString()),connected.getId()));
-				client.close();
 			} catch (IOException e) {
 				open = false;
 				System.out.println("Connection to user with id " + connected.getId() + " lost");
@@ -91,7 +90,7 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
 				proxy.reconnect("Fridge", address, id);
 				client.close();
 			}catch(IOException e){
-				sendElection();
+				//sendElection();
 			}
 		}
 	}
@@ -390,29 +389,20 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
             @Override
             public void run() {
                 update();
-                if(pollOldController(oldcontroller) == 0){
-                	
-            		clients.add(new Clientinfo(id,"Fridge",address));
-            		
+                try {
+            		Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(oldcontroller.getAddress().toString()),oldcontroller.getId()));
             		System.out.println("Old controller has reconnected.");
-            		
-            		try{
-            			
-            			
-            			
-    					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(oldcontroller.getAddress().toString()),oldcontroller.getId()));
-    					serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
-    					proxy.resyncClients(clients);
-    					proxy.resyncUsers(users);
-    					proxy.resyncLights(lights);
-    					proxy.resyncMeasurements(measurements);
-
-    					
-
-            		}catch(IOException e) {}
-            		
+            		clients.add(new Clientinfo(id,"Fridge",address));
+            		pollOldController(oldcontroller);
+    				serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
+    				proxy.resyncClients(clients);
+    				proxy.resyncUsers(users);
+    				proxy.resyncLights(lights);
+    				proxy.resyncMeasurements(measurements);
+    				proxy.update();  
             		timer.cancel();
                 }
+                catch(IOException e){}
             }
         }, 0, 5000);
         

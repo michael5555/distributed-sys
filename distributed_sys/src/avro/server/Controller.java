@@ -90,6 +90,12 @@ public class Controller implements serverproto {
 	@Override
 	public synchronized int resyncClients(List<Clientinfo> clients) {
 		this.clients = clients;
+    	for (Clientinfo temp : clients) {
+    		if (temp.getId() > port + this.id){
+    			this.id = temp.getId() - port;
+    		}
+    	}
+    	this.id++;
 		return 0;
 	}
 	
@@ -113,58 +119,48 @@ public class Controller implements serverproto {
 	
 	public synchronized int pollOldController(Controllerinfo oldcontroller){
 		
-    	try {
-    		int oldid = oldcontroller.getId();
-    		String oldaddress = oldcontroller.getAddress().toString();
-    		Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(oldaddress),oldid));
-    		for(Clientinfo temp : clients) {
+    	int oldid = oldcontroller.getId();
+    	String oldaddress = oldcontroller.getAddress().toString();
+    	for(Clientinfo temp : clients) {
     			
-    			if(temp.getType().toString().equals("User")) {
-    				try{
-
-    					Transceiver client2 = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(temp.getAddress().toString()),temp.getId()));
-    					userproto proxy = (userproto) SpecificRequestor.getClient(userproto.class, client2);
-    					proxy.setcontrollerinfo(oldid, oldaddress);
-    				}catch(IOException e) {}
-
+    		if(temp.getType().toString().equals("User")) {
+    			try{
+   					Transceiver client2 = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(temp.getAddress().toString()),temp.getId()));
+   					userproto proxy = (userproto) SpecificRequestor.getClient(userproto.class, client2);
+   					proxy.setcontrollerinfo(oldid, oldaddress);
+   				}catch(IOException e) {}
     				
     			}
-    			else if(temp.getType().toString().equals("Light")) {
-    				try{
+   			else if(temp.getType().toString().equals("Light")) {
+   				try{
 
-    					Transceiver client2 = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(temp.getAddress().toString()),temp.getId()));
-    					lightproto proxy = (lightproto) SpecificRequestor.getClient(lightproto.class, client2);
-    					proxy.setcontrollerinfo(oldid, oldaddress);
-    				}catch(IOException e) {}
-
-    				
-    			}
-    			else if(temp.getType().toString().equals("Fridge")) {
-    				try{
-
-    					Transceiver client2 = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(temp.getAddress().toString()),temp.getId()));
-    					fridgeproto proxy = (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client2);
-    					proxy.setcontrollerinfo(oldid, oldaddress);
-    				}catch(IOException e) {}
+   					Transceiver client2 = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(temp.getAddress().toString()),temp.getId()));
+   					lightproto proxy = (lightproto) SpecificRequestor.getClient(lightproto.class, client2);
+   					proxy.setcontrollerinfo(oldid, oldaddress);
+   				}catch(IOException e) {}
 
     				
-    			}
-    			else if(temp.getType().toString().equals("TS")) {
-    				try{
+   			}
+   			else if(temp.getType().toString().equals("Fridge")) {
+   				try{
 
-    					Transceiver client2 = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(temp.getAddress().toString()),temp.getId()));
-    					tsproto proxy = (tsproto) SpecificRequestor.getClient(tsproto.class, client2);
-    					proxy.setcontrollerinfo(oldid, oldaddress);
-    				}catch(IOException e) {}
+   					Transceiver client2 = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(temp.getAddress().toString()),temp.getId()));
+   					fridgeproto proxy = (fridgeproto) SpecificRequestor.getClient(fridgeproto.class, client2);
+   					proxy.setcontrollerinfo(oldid, oldaddress);
+   				}catch(IOException e) {}
 
     				
-    			}
-    		}
+   			}
+   			else if(temp.getType().toString().equals("TS")) {
+   				try{
 
-    	}catch(IOException e){
-    		return -1;
-    	}
-    	
+   					Transceiver client2 = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(temp.getAddress().toString()),temp.getId()));
+   					tsproto proxy = (tsproto) SpecificRequestor.getClient(tsproto.class, client2);
+   					proxy.setcontrollerinfo(oldid, oldaddress);
+   				}catch(IOException e) {}
+   			}
+   		}    	
+
 		return 0;
 	}
 	
@@ -209,6 +205,8 @@ public class Controller implements serverproto {
 		}
 		clients.add(new Clientinfo(id,type2,address));
 		System.out.println(" Client reconnected: " + type2 + " (number: " +  id + " )");
+		
+		update();
 		return 0;
 	}
 	
@@ -249,6 +247,7 @@ public class Controller implements serverproto {
 				}
 			}
 		}
+		update();
 		return 0;
 	}
 	
@@ -313,6 +312,7 @@ public class Controller implements serverproto {
 				}
 			}
 		}
+		update();
 		return 0;
 	}
 	
@@ -351,6 +351,7 @@ public class Controller implements serverproto {
 				break;
 			}
 		}
+		update();
 		return 0;
 	}
 	
@@ -469,6 +470,7 @@ public class Controller implements serverproto {
 				break;
 			}		
 		}
+		update();
 		return 0;
 	}
 

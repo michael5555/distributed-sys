@@ -27,6 +27,7 @@ public class Light implements lightproto  {
 
 
 	public Light(int id,String conaddr, String addr) {
+
 		this.conaddress = conaddr;
 		this.address = addr;
 		state = false;

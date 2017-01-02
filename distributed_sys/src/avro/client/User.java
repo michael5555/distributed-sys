@@ -73,7 +73,6 @@ public class User extends Controller implements userproto,serverproto {
 		if (!fridge.getId().equals(0)) {
 			try{
 				Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(fridge.getAddress().toString()),fridge.getId()));
-				client.close();
 			} catch (IOException e) {
 				fridge.setId(0);
 				System.out.println("Connection to fridge lost.");
@@ -88,7 +87,7 @@ public class User extends Controller implements userproto,serverproto {
 				proxy.reconnect("User", address, id);
 				client.close();
 			}catch(IOException e){
-				sendElection();
+				//sendElection();
 			}
 		}
 	}
@@ -349,30 +348,21 @@ public class User extends Controller implements userproto,serverproto {
             @Override
             public void run() {
                 update();
-                if(pollOldController(oldcontroller) == 0){
-                	
+                try {
+            		Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(oldcontroller.getAddress().toString()),oldcontroller.getId()));
+            		System.out.println("Old controller has reconnected.");
             		clients.add(new Clientinfo(id,"User",address));
             		users.add(new Userinfo(id,true,address));
-            		
-            		System.out.println("Old controller has reconnected.");
-
-            		
-            		try{
-            			
-    					Transceiver client = new SaslSocketTransceiver(new InetSocketAddress(InetAddress.getByName(oldcontroller.getAddress().toString()),oldcontroller.getId()));
-    					serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
-    					proxy.resyncClients(clients);
-    					proxy.resyncUsers(users);
-    					proxy.resyncLights(lights);
-    					proxy.resyncMeasurements(measurements);
-
-    					
-
-            		}catch(IOException e) {}
-            		
+            		pollOldController(oldcontroller);
+    				serverproto proxy = (serverproto) SpecificRequestor.getClient(serverproto.class, client);
+    				proxy.resyncClients(clients);
+    				proxy.resyncUsers(users);
+    				proxy.resyncLights(lights);
+    				proxy.resyncMeasurements(measurements);
+    				proxy.update();  
             		timer.cancel();
-            		
                 }
+                catch(IOException e){}
             }
         }, 0, 5000);
         

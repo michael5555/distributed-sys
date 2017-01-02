@@ -55,31 +55,31 @@
     </target>
     <target name="Controller">
         <java classname="avro.server.Controller" failonerror="true" fork="yes">
-            <arg line="&quot;192.168.0.213&quot;"/>
+            <arg line="&quot;143.169.217.40&quot;"/>
             <classpath refid="distributed_sys.classpath"/>
         </java>
     </target>
     <target name="Fridge">
         <java classname="avro.client.Fridge" failonerror="true" fork="yes">
-            <arg line="&quot;192.168.0.213&quot; &quot;192.168.0.213&quot;"/>
+            <arg line="&quot;143.169.217.40&quot; &quot;143.169.217.40&quot;"/>
             <classpath refid="distributed_sys.classpath"/>
         </java>
     </target>
     <target name="Light">
         <java classname="avro.client.Light" failonerror="true" fork="yes">
-            <arg line="&quot;192.168.0.213&quot; &quot;192.168.0.213&quot;"/>
+            <arg line="&quot;143.169.217.40&quot; &quot;143.169.217.40&quot;"/>
             <classpath refid="distributed_sys.classpath"/>
         </java>
     </target>
     <target name="TemperatureSensor">
         <java classname="avro.client.TemperatureSensor" failonerror="true" fork="yes">
-            <arg line="&quot;192.168.0.213&quot; &quot;192.168.0.213&quot;"/>
+            <arg line="&quot;143.169.217.40&quot; &quot;143.169.217.40&quot;"/>
             <classpath refid="distributed_sys.classpath"/>
         </java>
     </target>
     <target name="User">
         <java classname="avro.client.User" failonerror="true" fork="yes">
-            <arg line="&quot;192.168.0.213&quot; &quot;192.168.0.213&quot;"/>
+            <arg line="&quot;143.169.217.40&quot; &quot;143.169.217.40&quot;"/>
             <classpath refid="distributed_sys.classpath"/>
         </java>
     </target>
