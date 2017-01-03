@@ -342,7 +342,6 @@ public class User extends Controller implements userproto,serverproto {
 		} catch (IOException e) {
 			
 		}
-
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -360,18 +359,21 @@ public class User extends Controller implements userproto,serverproto {
     				proxy.resyncLights(lights);
     				proxy.resyncMeasurements(measurements);
     				proxy.update();  
-            		timer.cancel();
+    				timer.cancel();
+            		
                 }
                 catch(IOException e){}
             }
         }, 0, 5000);
         
         
-		try {
-			server2.join();
+		/*try {
+			while (runserver){
+				server2.join();
+			}
 		} catch (InterruptedException e) {
-			
-		}
+        
+		}*/
 	}
 
 	

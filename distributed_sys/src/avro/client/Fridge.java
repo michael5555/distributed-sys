@@ -407,11 +407,11 @@ public class Fridge extends Controller implements fridgeproto,serverproto  {
         }, 0, 5000);
         
         
-		try {
+		/*try {
 			server2.join();
 		} catch (InterruptedException e) {
 			
-		}
+		}*/
 	}
 	
 	@Override
