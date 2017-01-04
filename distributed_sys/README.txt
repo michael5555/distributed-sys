@@ -2,7 +2,7 @@
 - 0. ADDITIONAL (unimportant) INFORMATION -
 -------------------------------------------
 
-- This code was written by Micha‘l Adriaensen and Luna Dierckx for the subject Distributed Systems at the University of Antwerp during the schoolyear of 2016-2017.
+- This code was written by MichaÃ«l Adriaensen and Luna Dierckx for the subject Distributed Systems at the University of Antwerp during the schoolyear of 2016-2017.
 - We are not native english speakers, so excuse us for spelling and or grammatical mistakes made in any of the files
 - All code was written in the Eclipse IDE for Java Developers (newest version at that time: Neon.1)
 
